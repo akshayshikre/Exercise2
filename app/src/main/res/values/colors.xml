@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1c2030</color>
+    <color name="colorPrimaryDark">#303f9f</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorButtonsBackLayout">#f8f8f8</color>
+    <color name="colorButtonsBack">#5b6693</color>
+    <color name="colorListHeader">#e1e2e6</color>
+    <color name="colorUpGreen">#079b38</color>
+    <color name="colorDownRed">#f03737</color>
+    <color name="colorNextButton">#ababab</color>
+    <color name="colorFabTint">#5b6693</color>
+</resources>
