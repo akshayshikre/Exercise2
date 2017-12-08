@@ -7,14 +7,20 @@
     <group
         android:checkableBehavior="single"
         android:menuCategory="container">
+    <group
+        android:id="@+id/menu_top"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
 
+            android:title="Import" />
+    </group>
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
+            app:actionLayout="@layout/actionlayout"
+            android:actionLayout="@layout/actionlayout"
             android:title="Gallery" />
         <item
             android:id="@+id/nav_slideshow"
