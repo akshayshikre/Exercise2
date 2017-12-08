@@ -48,7 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             holder.img.setImageResource(R.drawable.up_green_arrow);
             holder.changetv.setTextColor(ContextCompat.getColor(ctx, R.color.colorUpGreen));
         }
-        holder.img.setOnClickListener(new View.OnClickListener() {
+        holder.imgnext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent in=new Intent(ctx,Main2Activity.class);
@@ -75,7 +75,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView nametv,pricetv,volumetv,changetv;
-        ImageView img,img1;
+        ImageView img,img1,imgnext;
         public MyViewHolder(View itemView) {
             super(itemView);
             nametv = (TextView) itemView.findViewById(R.id.namerow);
@@ -84,6 +84,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             changetv = (TextView) itemView.findViewById(R.id.changerow);
             img=(ImageView) itemView.findViewById(R.id.imgrow);
             img1=(ImageView) itemView.findViewById(R.id.imgrow1);
+            imgnext=(ImageView) itemView.findViewById(R.id.imgnextrow);
         }
     }
 }

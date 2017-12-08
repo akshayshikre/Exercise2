@@ -6,8 +6,8 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="btct">price(฿)</string>
-    <string name="etht">price(ð)</string>
-    <string name="eutot">price(€)</string>
-    <string name="usdt">price($)</string>
+    <string name="btct">Price(฿)</string>
+    <string name="etht">Price(ð)</string>
+    <string name="eutot">Price(€)</string>
+    <string name="usdt">Price($)</string>
 </resources>

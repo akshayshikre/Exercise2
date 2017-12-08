@@ -11,12 +11,11 @@ TextView nametv,pricetv,volumetv,changetv,uptv;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
         nametv=findViewById(R.id.textView6);
-        pricetv=findViewById(R.id.textView6);
-        volumetv=findViewById(R.id.textView6);
-        changetv=findViewById(R.id.textView6);
-        uptv=findViewById(R.id.textView6);
+        pricetv=findViewById(R.id.textView7);
+        volumetv=findViewById(R.id.textView8);
+        changetv=findViewById(R.id.textView9);
+        uptv=findViewById(R.id.textView10);
         nametv.setText(getIntent().getStringExtra("Name"));
         pricetv.setText(getIntent().getStringExtra("Price"));
         volumetv.setText(getIntent().getStringExtra("Volume"));
