@@ -2,10 +2,13 @@ package com.example.dadasaheb.exercise2;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,9 +31,15 @@ public class MainActivity extends AppCompatActivity
     RecyclerView recyclerView;
     TextView pricetv;
     ArrayList<row> rows=new ArrayList<row>();
-FloatingActionButton fab1,fab2,fab3,fab4;
+FloatingActionButton fab1,fab2,fab3,fab4,fab5;
 
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        ScrollView sv = (ScrollView) findViewById(R.id.scrollView);
+        sv.scrollTo(0, 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +86,7 @@ FloatingActionButton fab1,fab2,fab3,fab4;
         fab2=findViewById(R.id.floatingActionButton2);
         fab3=findViewById(R.id.floatingActionButton3);
         fab4=findViewById(R.id.floatingActionButton4);
+        fab5=findViewById(R.id.floatingActionButton5);
         pricetv=findViewById(R.id.pricetv);
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +104,10 @@ FloatingActionButton fab1,fab2,fab3,fab4;
 
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.btct));
-            }
+                fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
+                fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);}
         });
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +125,10 @@ FloatingActionButton fab1,fab2,fab3,fab4;
 
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.etht));
-            }
+                fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
+                fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);}
         });
         fab3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +145,10 @@ FloatingActionButton fab1,fab2,fab3,fab4;
                         rows.add(new row("abc",String.format("%.2f", i*15.6*4),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.eutot));
-            }
+                fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
+                fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);}
         });
         fab4.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,8 +165,19 @@ FloatingActionButton fab1,fab2,fab3,fab4;
                         rows.add(new row("abc",String.format("%.2f", i*15.6*5),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.usdt));
+                fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+                fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);}
+        });
+        fab5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fab5.setBackgroundColor(Color.WHITE);
+
             }
         });
+
     }
 
     @Override
@@ -195,12 +226,7 @@ FloatingActionButton fab1,fab2,fab3,fab4;
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
