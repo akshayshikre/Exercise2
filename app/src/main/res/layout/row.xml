@@ -22,18 +22,18 @@
 
             <ImageView
                 android:id="@+id/imgrow1"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="6dp"
                 app:srcCompat="@mipmap/ic_launcher_round" />
 
             <TextView
                 android:id="@+id/namerow"
-                android:layout_width="70dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="8dp"
                 android:autoSizeMaxTextSize="20sp"
                 android:autoSizeMinTextSize="10sp"
                 android:fontFamily="@android:"
@@ -81,9 +81,10 @@
 
             <TextView
                 android:id="@+id/changerow"
-                android:layout_width="75dp"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
                 android:autoSizeMaxTextSize="20sp"
                 android:autoSizeMinTextSize="10sp"
                 android:gravity="left|center"
