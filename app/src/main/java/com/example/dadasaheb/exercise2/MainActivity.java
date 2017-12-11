@@ -50,9 +50,6 @@ FloatingActionButton fab1,fab2,fab3,fab4,fab5;
         setSupportActionBar(toolbar);
 
 
-
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,9 +70,9 @@ FloatingActionButton fab1,fab2,fab3,fab4,fab5;
 
         for(int i=0;i<10;i++)
             if(i%2==1)
-            rows.add(new row("abc",String.format("%.2f", i*21.23),String.valueOf(i*15),String.format("%.2f", i*3.9),true));
+            rows.add(new row("abc",String.format("%.2f", i*21.23),String.format("%.2f", i*3.9),true));
         else
-            rows.add(new row("abc",String.format("%.2f", i*15.6),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
+            rows.add(new row("abc",String.format("%.2f", i*15.6),String.format("%.2f", i*6.8),false));
          recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -100,9 +97,9 @@ FloatingActionButton fab1,fab2,fab3,fab4,fab5;
                 rows.clear();
                 for(int i=0;i<10;i++)
                     if(i%2==1)
-                        rows.add(new row("abc","฿ "+String.format("%.2f", i*21.23*2),String.valueOf(i*15),String.format("%.2f", i*3.9),true));
+                        rows.add(new row("abc","฿ "+String.format("%.2f", i*21.23*2),String.format("%.2f", i*3.9),true));
                     else
-                        rows.add(new row("abc","฿ "+String.format("%.2f", i*15.6*2),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
+                        rows.add(new row("abc","฿ "+String.format("%.2f", i*15.6*2),String.format("%.2f", i*6.8),false));
 
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.btct));
@@ -123,9 +120,9 @@ FloatingActionButton fab1,fab2,fab3,fab4,fab5;
                 rows.clear();
                 for(int i=0;i<10;i++)
                     if(i%2==1)
-                        rows.add(new row("abc","ð "+String.format("%.2f", i*21.23*3),String.valueOf(i*15),String.format("%.2f", i*3.9),true));
+                        rows.add(new row("abc","ð "+String.format("%.2f", i*21.23*3),String.format("%.2f", i*3.9),true));
                     else
-                        rows.add(new row("abc","ð "+String.format("%.2f", i*15.6*3),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
+                        rows.add(new row("abc","ð "+String.format("%.2f", i*15.6*3),String.format("%.2f", i*6.8),false));
 
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.etht));
@@ -145,9 +142,9 @@ FloatingActionButton fab1,fab2,fab3,fab4,fab5;
                 rows.clear();
                 for(int i=0;i<10;i++)
                     if(i%2==1)
-                        rows.add(new row("abc","€ "+String.format("%.2f", i*21.23*4),String.valueOf(i*15),String.format("%.2f", i*3.9),true));
+                        rows.add(new row("abc","€ "+String.format("%.2f", i*21.23*4),String.format("%.2f", i*3.9),true));
                     else
-                        rows.add(new row("abc","€ "+String.format("%.2f", i*15.6*4),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
+                        rows.add(new row("abc","€ "+String.format("%.2f", i*15.6*4),String.format("%.2f", i*6.8),false));
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.eutot));
                 fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
@@ -165,9 +162,9 @@ FloatingActionButton fab1,fab2,fab3,fab4,fab5;
                 rows.clear();
                 for(int i=0;i<10;i++)
                     if(i%2==1)
-                        rows.add(new row("abc","$ "+String.format("%.2f", i*21.23*5),String.valueOf(i*15),String.format("%.2f", i*3.9),true));
+                        rows.add(new row("abc","$ "+String.format("%.2f", i*21.23*5),String.format("%.2f", i*3.9),true));
                     else
-                        rows.add(new row("abc","$ "+String.format("%.2f", i*15.6*5),String.valueOf(i*12),String.format("%.2f", i*6.8),false));
+                        rows.add(new row("abc","$ "+String.format("%.2f", i*15.6*5),String.format("%.2f", i*6.8),false));
                 recyclerView.setAdapter(new MyAdapter(MainActivity.this,rows));
                 pricetv.setText(getString(R.string.usdt));
                 fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);

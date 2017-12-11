@@ -9,24 +9,24 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        app:srcCompat="@drawable/bitimg" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Android Studio"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_centerVertical="true"
+        android:text="User Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
@@ -35,8 +35,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView11"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="android.studio@android.com" />
+        android:layout_toRightOf="@id/imageView"
+        android:text="+917875646457" />
 
     <View
         android:layout_width="match_parent"
@@ -44,8 +46,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="13dp"
-        android:layout_marginRight="13dp"
         android:background="@color/colorwhite"></View>
 
 </RelativeLayout>

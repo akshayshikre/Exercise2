@@ -6,13 +6,12 @@ package com.example.dadasaheb.exercise2;
 
 public class row {
 
-    String name,price,volume,change;
+    String name,price,change;
     boolean up;
 
-    public row(String name, String price, String volume, String change, boolean up) {
+    public row(String name, String price, String change, boolean up) {
         this.name = name;
         this.price = price;
-        this.volume = volume;
         this.change = change;
         this.up = up;
     }

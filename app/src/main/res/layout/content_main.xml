@@ -21,9 +21,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorButtonsBackLayout"
                 android:orientation="horizontal"
-                android:weightSum="4"
-                android:background="@color/colorButtonsBackLayout">
+                android:weightSum="4">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
                         app:elevation="2dp"
                         app:fabSize="normal"
                         app:pressedTranslationZ="12dp"
-                        app:srcCompat="@drawable/btc" />
+                        app:srcCompat="@drawable/btcicons" />
 
                 </LinearLayout>
 
@@ -74,40 +74,40 @@
                         app:pressedTranslationZ="12dp"
                         app:srcCompat="@drawable/eth" />
 
-             <!--      <FrameLayout-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content">-->
+                    <!--      <FrameLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content">-->
 
-                        <!--<android.support.design.widget.FloatingActionButton-->
-                            <!--android:id="@+id/floatingActionButton2"-->
+                    <!--<android.support.design.widget.FloatingActionButton-->
+                    <!--android:id="@+id/floatingActionButton2"-->
 
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_margin="8dp"-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:clickable="true"-->
-                            <!--android:src="@android:color/transparent"-->
-                            <!--android:tint="@color/colorPrimary"-->
-                            <!--app:backgroundTint="@color/colorButtonsBackLayout"-->
-                            <!--app:borderWidth="0dp"-->
-                            <!--app:elevation="0dp"-->
-                            <!--app:fabSize="normal"-->
-                            <!--app:pressedTranslationZ="12dp"-->
-                            <!--app:srcCompat="@drawable/eth"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_margin="8dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:clickable="true"-->
+                    <!--android:src="@android:color/transparent"-->
+                    <!--android:tint="@color/colorPrimary"-->
+                    <!--app:backgroundTint="@color/colorButtonsBackLayout"-->
+                    <!--app:borderWidth="0dp"-->
+                    <!--app:elevation="0dp"-->
+                    <!--app:fabSize="normal"-->
+                    <!--app:pressedTranslationZ="12dp"-->
+                    <!--app:srcCompat="@drawable/eth"-->
 
-                            <!--/>-->
+                    <!--/>-->
 
-                        <!--<TextView-->
-                            <!--android:id="@+id/eurotv"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:layout_gravity="center"-->
-                            <!--android:elevation="0dp"-->
-                            <!--android:gravity="center"-->
-                            <!--android:text="€"-->
-                            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-                            <!--android:textColor="@android:color/black"-->
-                            <!--android:textSize="40sp" />-->
+                    <!--<TextView-->
+                    <!--android:id="@+id/eurotv"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:elevation="0dp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="€"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+                    <!--android:textColor="@android:color/black"-->
+                    <!--android:textSize="40sp" />-->
                     <!--</FrameLayout>-->
                 </LinearLayout>
 
@@ -132,7 +132,7 @@
                         app:elevation="2dp"
                         app:fabSize="normal"
                         app:pressedTranslationZ="12dp"
-                        app:srcCompat="@drawable/euro" />
+                        app:srcCompat="@drawable/ifeuro" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -156,7 +156,7 @@
                         app:elevation="2dp"
                         app:fabSize="normal"
                         app:pressedTranslationZ="12dp"
-                        app:srcCompat="@drawable/usd" />
+                        app:srcCompat="@drawable/ifusd" />
                 </LinearLayout>
 
 
@@ -165,9 +165,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorButtonsBackLayout"
                 android:orientation="horizontal"
-                android:weightSum="4"
-                android:background="@color/colorButtonsBackLayout">
+                android:paddingBottom="8dp"
+                android:weightSum="4">
 
                 <TextView
                     android:id="@+id/textView5"
@@ -222,10 +223,8 @@
                     android:id="@+id/view"
                     style="@style/Divider"
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:color/darker_gray" />
+                    android:background="@color/colorListHeader" />
             </LinearLayout>
 
             <LinearLayout
@@ -233,8 +232,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/colorListHeader"
                 android:orientation="horizontal"
+                android:weightSum="5.5"
                 app:layout_constraintBottom_toTopOf="@+id/recyclerView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -244,37 +243,43 @@
                     android:id="@+id/nametv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2.5"
                     android:gravity="center"
-                    android:text="Name"
-                    android:textSize="16sp" />
+                    android:text="Title"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/pricetv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.75"
-                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="left|center"
                     android:text="Price($)"
-                    android:textSize="16sp" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.35"
+                    android:layout_weight="2"
                     android:gravity="left|center"
-                    android:text="Volume"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.35"
-                    android:gravity="left|center"
-                    android:text="Change"
-                    android:textSize="16sp" />
+                    android:text="Changed"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/view2"
+                style="@style/Divider"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorNextButton" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
