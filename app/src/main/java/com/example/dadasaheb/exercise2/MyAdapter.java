@@ -14,12 +14,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static com.example.dadasaheb.exercise2.MainActivity.selectedButton;
+
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    ArrayList<row> myrows;
+    ArrayList<Coin> myrows;
     Context ctx;
-    public MyAdapter(Context c, ArrayList<row> rows) {
-        myrows=rows;
+    public MyAdapter(Context c, ArrayList<Coin> coinList) {
+        myrows= coinList;
         ctx=c;
     }
 
@@ -32,21 +34,37 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        holder.nametv.setText(myrows.get(position).name);
-        holder.pricetv.setText(myrows.get(position).price);
-        holder.changetv.setText(myrows.get(position).change);
-        Picasso.with(ctx)
-                .load(R.mipmap.ic_launcher_round)
-                .rotate(180)
-                .into(holder.img1);
-        if(myrows.get(position).up==false) {
+        holder.nametv.setText(myrows.get(position).Name);
+        if(selectedButton.equals("btc"))
+        {holder.pricetv.setText("฿ "+myrows.get(position).Price_BTC);
+        holder.changetv.setText(myrows.get(position).Change_BTC);
+        Picasso.with(ctx).load(myrows.get(position).ImageUrl).rotate(0).into(holder.img1);
+        }
+        else if(selectedButton.equals("eth"))
+        {holder.pricetv.setText("ð "+myrows.get(position).Price_ETH);
+        holder.changetv.setText(myrows.get(position).Change_ETH);
+        Picasso.with(ctx).load(myrows.get(position).ImageUrl).rotate(0).into(holder.img1);
+        }
+        else if(selectedButton.equals("euro"))
+        {holder.pricetv.setText("€ "+myrows.get(position).Price_EUR);
+        holder.changetv.setText(myrows.get(position).Change_EUR);
+        Picasso.with(ctx).load(myrows.get(position).ImageUrl).rotate(0).into(holder.img1);
+        }
+        else if(selectedButton.equals("usd"))
+        {holder.pricetv.setText("$ "+myrows.get(position).Price_USD);
+        holder.changetv.setText(myrows.get(position).Change_USD);
+        Picasso.with(ctx).load(myrows.get(position).ImageUrl).rotate(0).into(holder.img1);
+        }
+
+
+       // if(myrows.get(position).up==false) {
             holder.img.setImageResource(R.drawable.down_red_arrow);
             holder.changetv.setTextColor(ContextCompat.getColor(ctx, R.color.colorDownRed));
-        }
-        else{
-            holder.img.setImageResource(R.drawable.up_green_arrow);
-            holder.changetv.setTextColor(ContextCompat.getColor(ctx, R.color.colorUpGreen));
-        }
+       // }
+       //else{
+        //    holder.img.setImageResource(R.drawable.up_green_arrow);
+         //   holder.changetv.setTextColor(ContextCompat.getColor(ctx, R.color.colorUpGreen));
+       // }
         holder.imgnext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,13 +72,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 in.putExtra("Name",holder.nametv.getText().toString());
                 in.putExtra("Price",holder.pricetv.getText().toString());
                 in.putExtra("Change",holder.changetv.getText().toString());
-                in.putExtra("UP",myrows.get(position).up);
+                in.putExtra("UP",myrows.get(position).SortOrder);
                 ctx.startActivity(in);
             }
         });
 
     }
-    public void updateList(ArrayList<row> newlist) {
+    public void updateList(ArrayList<Coin> newlist) {
         myrows.clear();
         myrows.addAll(newlist);
         this.notifyDataSetChanged();

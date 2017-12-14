@@ -27,7 +27,8 @@
         android:layout_alignStart="@+id/textView"
         android:layout_centerVertical="true"
         android:text="User Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textView"
@@ -38,7 +39,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@id/imageView"
-        android:text="+917875646457" />
+        android:text="+917875646457"
+        android:textSize="16sp" />
 
     <View
         android:layout_width="match_parent"

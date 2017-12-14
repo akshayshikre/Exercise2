@@ -5,24 +5,36 @@
     tools:showIn="navigation_view">
 
     <group
+
         android:checkableBehavior="single"
         android:menuCategory="container">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import"
+            android:id="@+id/home"
+            android:icon="@drawable/home"
+            android:title="Home"
             />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/settings"
+            android:icon="@drawable/settings"
+            android:title="Settings" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/testdata"
+            android:icon="@drawable/testdata"
+            android:title="Test Data" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/aboutus"
+            android:icon="@drawable/aboutus"
+            android:title="About Us" />
+
+        <item
+            android:id="@+id/support"
+            android:icon="@drawable/support"
+            android:title="Support" />
+
+        <item
+            android:id="@+id/help"
+            android:icon="@drawable/help"
+            android:title="Help" />
+
     </group>
 </menu>
