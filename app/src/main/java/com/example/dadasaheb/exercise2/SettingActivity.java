@@ -55,11 +55,11 @@ public class SettingActivity extends AppCompatActivity
 //         //sv.scrollTo(0, 0);
 //     }
 
-     @Override
-     protected void onDestroy() {
-         stopService(in);
-         super.onDestroy();
-     }
+//     @Override
+//     protected void onDestroy() {
+//         stopService(in);
+//         super.onDestroy();
+//     }
 
      @Override
      protected void onCreate(Bundle savedInstanceState) {

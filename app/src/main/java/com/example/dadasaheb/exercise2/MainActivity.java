@@ -455,7 +455,6 @@ public class MainActivity extends AppCompatActivity
         fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
         fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
     }
-
     void usdClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
