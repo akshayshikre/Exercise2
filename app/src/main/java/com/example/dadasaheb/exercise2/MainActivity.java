@@ -47,13 +47,16 @@ public class MainActivity extends AppCompatActivity
     Intent in;
     MyAdapter customAdapter;
     RecyclerView recyclerView;
-    TextView pricetv;
+    Typeface font;
+    TextView pricetv,changedtv;
     ArrayList<Coin> coinList= new ArrayList<Coin>();
     FloatingActionButton fab1,fab2,fab3,fab4,fab5;
     TextView fab1tv,fab2tv,fab3tv,fab4tv,fab5tv;
-    //CuboidButton cb1,cb2,cb3,cb4;
     OkHttpClient client = new OkHttpClient();
-    public static String selectedButton ="btc";
+    public static String selectedButton ="usd";
+    public static String pricesort ="down";
+    public static String changesort ="down";
+    public static String selectedsort ="price";
     public static String url= "https://cryptocurrencyapp.herokuapp.com/getCoinList";
 
     @Override
@@ -74,12 +77,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
+        font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
 //        Intent startintent = new Intent(this, MyService3.class);
 //        startintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
 //        startService(startintent);
-
-
 
         /**buit code**/
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -109,11 +110,15 @@ public class MainActivity extends AppCompatActivity
         fab3tv = (TextView)findViewById( R.id.fab3tv );
         fab4tv = (TextView)findViewById( R.id.fab4tv );
         fab5tv = (TextView)findViewById( R.id.fab5tv );
+        pricetv = (TextView)findViewById( R.id.pricetv );
+        changedtv = (TextView)findViewById( R.id.changedtv );
         fab1tv.setTypeface(font);
         fab2tv.setTypeface(font);
         fab3tv.setTypeface(font);
         fab4tv.setTypeface(font);
         fab5tv.setTypeface(font);
+        pricetv.setTypeface(font);
+        changedtv.setTypeface(font);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         ScrollView scrollView =(ScrollView)findViewById(R.id.recscroll);
@@ -128,8 +133,30 @@ public class MainActivity extends AppCompatActivity
         fab3 = (FloatingActionButton)findViewById(R.id.fab3);
         fab4 = (FloatingActionButton)findViewById(R.id.fab4);
         // fab5=findViewById(R.id.floatingActionButton5);
-        pricetv = (TextView) findViewById(R.id.pricetv);
+
         //eurotv=findViewById(R.id.eurotv);
+
+        pricetv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            selectedsort="price";
+            if(pricesort.equals("down")) pricesort="up";
+            else if(pricesort.equals("up")) pricesort="down";
+            mpricesort();
+            customAdapter.notifyDataSetChanged();
+                    }
+        });
+
+        changedtv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            selectedsort="change";
+            if(changesort.equals("down")) changesort="up";
+            else if(changesort.equals("up")) changesort="down";
+            mchangesort();
+            customAdapter.notifyDataSetChanged();
+            }
+        });
 
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +171,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 selectedButton="euro";
-
                 euroClick();
 
                 }
@@ -178,7 +204,11 @@ public class MainActivity extends AppCompatActivity
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        pricetv.setText(getString(R.string.usdt));
+        if(pricesort.equals("down"))
+        pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.usdt));
+        else if(pricesort.equals("up"))
+        pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.usdt));
+        changedtv.setText("CHANGE");
         fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -252,7 +282,7 @@ public class MainActivity extends AppCompatActivity
 
 
     public class OkHttpHandler extends AsyncTask<String,String,String>{
-
+        Boolean first=true;
         @Override
         protected void onPreExecute() {
 
@@ -380,7 +410,7 @@ public class MainActivity extends AppCompatActivity
                                     c.Sponsored+" "
                     );
                 }
-                Collections.sort(coinList, new Comparator<Coin>() {
+                /*Collections.sort(coinList, new Comparator<Coin>() {
                     @Override
                     public int compare(Coin coin, Coin t1) {
                         String s1 = coin.SortOrder;
@@ -388,9 +418,15 @@ public class MainActivity extends AppCompatActivity
                         return s1.compareToIgnoreCase(s2);
                     }
 
-                });
-                customAdapter = new MyAdapter(MainActivity.this, coinList);
-                recyclerView.setAdapter(customAdapter);
+                });*/
+                if(selectedsort.equals("price")) mpricesort();
+                else if(selectedsort.equals("change")) mchangesort();
+                if(first==true) {
+                    customAdapter = new MyAdapter(MainActivity.this, coinList);
+                    recyclerView.setAdapter(customAdapter);
+                    first=false;
+                }
+                else if(first==false) customAdapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -409,58 +445,75 @@ public class MainActivity extends AppCompatActivity
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-//        coinList.clear();
-//        for(int i=0;i<20;i++)
-//            if(i%2==1)
-//                rows.add(new row("abc","฿ "+String.format("%.2f", i*21.23*2),String.format("%.2f", i*3.9),true));
-//            else
-//                rows.add(new row("abc","฿ "+String.format("%.2f", i*15.6*2),String.format("%.2f", i*6.8),false));
-
-        recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.usdt));
         fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        if(selectedsort.equals("price")){
+            if(pricesort.equals("down"))
+                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.usdt));
+            else if(pricesort.equals("up"))
+                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.usdt));
+            changedtv.setText("CHANGE");
+        }
+        else if(selectedsort.equals("change")){
+            if(changesort.equals("down"))
+                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+            else if(changesort.equals("up"))
+                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
+            pricetv.setText(getString(R.string.usdt));
+        }
+        customAdapter.notifyDataSetChanged();
     }
     void euroClick(){
-        // eurotv.setTextColor(Color.WHITE);
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-//        rows.clear();
-//        for(int i=0;i<20;i++)
-//            if(i%2==1)
-//                rows.add(new row("abc","ð "+String.format("%.2f", i*21.23*3),String.format("%.2f", i*3.9),true));
-//            else
-//                rows.add(new row("abc","ð "+String.format("%.2f", i*15.6*3),String.format("%.2f", i*6.8),false));
-//
-        recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.eutot));
         fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab2tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
-
+        if(selectedsort.equals("price")){
+            if(pricesort.equals("down"))
+                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.eutot));
+            else if(pricesort.equals("up"))
+                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.eutot));
+            changedtv.setText("CHANGE");
+        }
+        else if(selectedsort.equals("change")){
+            if(changesort.equals("down"))
+                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+            else if(changesort.equals("up"))
+                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
+            pricetv.setText(getString(R.string.eutot));
+        }
+        customAdapter.notifyDataSetChanged();
     }
     void btcClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-//        rows.clear();
-//        for(int i=0;i<20;i++)
-//            if(i%2==1)
-//                rows.add(new row("abc","€ "+String.format("%.2f", i*21.23*4),String.format("%.2f", i*3.9),true));
-//            else
-//                rows.add(new row("abc","€ "+String.format("%.2f", i*15.6*4),String.format("%.2f", i*6.8),false));
-        recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.btct));
         fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        if(selectedsort.equals("price")){
+            if(pricesort.equals("down"))
+                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.btct));
+            else if(pricesort.equals("up"))
+                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.btct));
+            changedtv.setText("CHANGE");
+        }
+        else if(selectedsort.equals("change")){
+            if(changesort.equals("down"))
+                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+            else if(changesort.equals("up"))
+                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
+            pricetv.setText(getString(R.string.btct));
+        }
+        customAdapter.notifyDataSetChanged();
    }
 
 
@@ -469,18 +522,142 @@ public class MainActivity extends AppCompatActivity
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
-//        coinList.clear();
-//        for(int i=0;i<20;i++)
-//            if(i%2==1)
-//                rows.add(new row("abc","$ "+String.format("%.2f", i*21.23*5),String.format("%.2f", i*3.9),true));
-//            else
-//                rows.add(new row("abc","$ "+String.format("%.2f", i*15.6*5),String.format("%.2f", i*6.8),false));
-        recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.inrt));
         fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab4tv.setTextColor(getResources().getColor(R.color.colorwhite));
+        if(selectedsort.equals("price")){
+            if(pricesort.equals("down"))
+                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.inrt));
+            else if(pricesort.equals("up"))
+                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.inrt));
+            changedtv.setText("CHANGE");
+        }
+        else if(selectedsort.equals("change")){
+            if(changesort.equals("down"))
+                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+            else if(changesort.equals("up"))
+                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
+            pricetv.setText(getString(R.string.inrt));
+        }
+        customAdapter.notifyDataSetChanged();
     }
+    void mpricesort(){
+        Collections.sort(coinList, new Comparator<Coin>() {
+            @Override
+            public int compare(Coin coin, Coin t1) {
+                String s1="",s2="";
+                if(selectedButton.equals("usd")){
+                    s1 = coin.Price_USD;
+                    s2 = t1.Price_USD;
+                }
+                else if(selectedButton.equals("euro")){
+                    s1 = coin.Price_EUR;
+                    s2 = t1.Price_EUR;
+                }
+                else if(selectedButton.equals("btc")){
+                    s1 = coin.Price_BTC;
+                    s2 = t1.Price_BTC;
+                }
+                else if(selectedButton.equals("inr")){
+                    s1 = coin.Price_ETH;
+                    s2 = t1.Price_ETH;
+                }
+                if(pricesort.equals("down")) {
+                    return -s1.compareToIgnoreCase(s2);
+                }
+                else if (pricesort.equals("up")) {
+                    return s1.compareToIgnoreCase(s2);
+                }
+                else return 0;
+            }
 
+        });
+        if(pricesort.equals("down")){
+
+            if(selectedButton.equals("usd"))
+                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.usdt));
+            else if(selectedButton.equals("euro"))
+                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.eutot));
+            else if(selectedButton.equals("btc"))
+                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.btct));
+            else if(selectedButton.equals("inr"))
+                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.inrt));
+        }
+        else if(pricesort.equals("up")){
+
+            if(selectedButton.equals("usd"))
+                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.usdt));
+            else if(selectedButton.equals("euro"))
+                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.eutot));
+            else if(selectedButton.equals("btc"))
+                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.btct));
+            else if(selectedButton.equals("inr"))
+                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.inrt));
+        }
+        changedtv.setText("CHANGE");
+    }
+    void mchangesort(){
+        Collections.sort(coinList, new Comparator<Coin>() {
+            @Override
+            public int compare(Coin coin, Coin t1) {
+                String s1="",s2="";
+                if(selectedButton.equals("usd")){
+                    s1 = coin.Change_USD;
+                    s2 = t1.Change_USD;
+
+                }
+                else if(selectedButton.equals("euro")){
+                    s1 = coin.Change_EUR;
+                    s2 = t1.Change_EUR;
+                }
+                else if(selectedButton.equals("btc")){
+                    s1 = coin.Change_BTC;
+                    s2 = t1.Change_BTC;
+                }
+                else if(selectedButton.equals("inr")){
+                    s1 = coin.Change_ETH;
+                    s2 = t1.Change_ETH;
+                }
+                if(changesort.equals("down")) {
+                    return -s1.compareToIgnoreCase(s2);
+                }
+                else if (changesort.equals("up")) {
+                    return s1.compareToIgnoreCase(s2);
+                }
+                else return 0;
+            }
+        });
+        if(changesort.equals("down")){
+
+            if(selectedButton.equals("usd"))
+                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+            else if(selectedButton.equals("euro"))
+                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+            else if(selectedButton.equals("btc"))
+                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+            else if(selectedButton.equals("inr"))
+                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+        }
+        else if(changesort.equals("up")){
+
+            if(selectedButton.equals("usd"))
+                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+            else if(selectedButton.equals("euro"))
+                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+            else if(selectedButton.equals("btc"))
+                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+            else if(selectedButton.equals("inr"))
+                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+        }
+
+        if(selectedButton.equals("usd"))
+            pricetv.setText(getString(R.string.usdt));
+        else if(selectedButton.equals("euro"))
+            pricetv.setText(getString(R.string.eutot));
+        else if(selectedButton.equals("btc"))
+            pricetv.setText(getString(R.string.btct));
+        else if(selectedButton.equals("inr"))
+            pricetv.setText(getString(R.string.inrt));
+    }
 }
