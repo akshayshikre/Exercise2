@@ -204,11 +204,21 @@ public class MainActivity extends AppCompatActivity
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        if(pricesort.equals("down"))
-        pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.usdt));
-        else if(pricesort.equals("up"))
-        pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.usdt));
-        changedtv.setText("CHANGE");
+        if(selectedsort.equals("price")) {
+            if (pricesort.equals("down"))
+                pricetv.setText(getString(R.string.fa_sort_down) + " " + getString(R.string.usdt));
+            else if (pricesort.equals("up"))
+                pricetv.setText(getString(R.string.fa_sort_up) + " " + getString(R.string.usdt));
+            changedtv.setText("CHANGE");
+        }
+        else if(selectedsort.equals("change"))
+        {
+            if (changesort.equals("down"))
+                changedtv.setText(getString(R.string.fa_sort_down) + "CHANGE");
+            else if (pricesort.equals("up"))
+                changedtv.setText(getString(R.string.fa_sort_up) + "CHANGE");
+            pricetv.setText(getString(R.string.usdt));
+        }
         fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
