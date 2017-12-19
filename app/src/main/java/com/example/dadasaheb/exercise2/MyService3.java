@@ -7,8 +7,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
@@ -39,7 +37,7 @@ public class MyService3 extends Service {
         PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
 
 
-        Intent nextIntent = new Intent(this, SettingActivity.class);
+        Intent nextIntent = new Intent(this, ChartActivity.class);
         nextIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         nextIntent.setAction(Constants.ACTION.SETTING_ACTION);
         PendingIntent pnextIntent = PendingIntent.getActivity(this, 0, nextIntent, 0);

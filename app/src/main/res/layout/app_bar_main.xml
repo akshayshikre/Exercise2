@@ -22,7 +22,7 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/temp" />
+        layout="@layout/temp2" />
 <!--  here include content-->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -1,22 +1,12 @@
 package com.example.dadasaheb.exercise2;
 
-import android.content.ClipData;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.Outline;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.SupportActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -28,21 +18,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewOutlineProvider;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.cuboid.cuboidcirclebutton.CuboidButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,16 +35,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     public static final String MY_PREFS= "sharedprefs";
     int count;
     Intent in;
@@ -71,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     TextView pricetv;
     ArrayList<Coin> coinList= new ArrayList<Coin>();
     FloatingActionButton fab1,fab2,fab3,fab4,fab5;
+    TextView fab1tv,fab2tv,fab3tv,fab4tv,fab5tv;
     //CuboidButton cb1,cb2,cb3,cb4;
     OkHttpClient client = new OkHttpClient();
     public static String selectedButton ="btc";
@@ -94,10 +74,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        Intent startintent = new Intent(this, MyService3.class);
-        startintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-        startService(startintent);
+        Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
+//        Intent startintent = new Intent(this, MyService3.class);
+//        startintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+//        startService(startintent);
 
 
 
@@ -124,18 +104,29 @@ public class MainActivity extends AppCompatActivity
 /***built code end***/
 
 
-
+        fab1tv = (TextView)findViewById( R.id.fab1tv );
+        fab2tv = (TextView)findViewById( R.id.fab2tv );
+        fab3tv = (TextView)findViewById( R.id.fab3tv );
+        fab4tv = (TextView)findViewById( R.id.fab4tv );
+        fab5tv = (TextView)findViewById( R.id.fab5tv );
+        fab1tv.setTypeface(font);
+        fab2tv.setTypeface(font);
+        fab3tv.setTypeface(font);
+        fab4tv.setTypeface(font);
+        fab5tv.setTypeface(font);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
+        ScrollView scrollView =(ScrollView)findViewById(R.id.recscroll);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager);
+        ViewCompat.setNestedScrollingEnabled(recyclerView, false);
+        ViewCompat.setNestedScrollingEnabled(scrollView, false);
         // call the constructor of CustomAdapter to send the reference and data to Adapter
          // set the Adapter to RecyclerView
-        fab1 = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        fab2 = (FloatingActionButton)findViewById(R.id.floatingActionButton2);
-        fab3 = (FloatingActionButton)findViewById(R.id.floatingActionButton3);
-        fab4 = (FloatingActionButton)findViewById(R.id.floatingActionButton4);
+        fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        fab2 = (FloatingActionButton)findViewById(R.id.fab2);
+        fab3 = (FloatingActionButton)findViewById(R.id.fab3);
+        fab4 = (FloatingActionButton)findViewById(R.id.fab4);
         // fab5=findViewById(R.id.floatingActionButton5);
         pricetv = (TextView) findViewById(R.id.pricetv);
         //eurotv=findViewById(R.id.eurotv);
@@ -143,30 +134,34 @@ public class MainActivity extends AppCompatActivity
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedButton="btc";
-                btcClick();
+                selectedButton="usd";
+                usdClick();
+
                 }
         });
 
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedButton="eth";
-                ethClick();
+                selectedButton="euro";
+
+                euroClick();
+
                 }
         });
         fab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedButton="euro";
-                euroClick();
+                selectedButton="btc";
+                btcClick();
+
                }
         });
         fab4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedButton="usd";
-                usdClick();
+                selectedButton="inr";
+                inrClick();
             }
         });
        /* fab5.setOnClickListener(new View.OnClickListener() {
@@ -179,9 +174,16 @@ public class MainActivity extends AppCompatActivity
         OkHttpHandler okHttpHandler= new OkHttpHandler();
         okHttpHandler.execute(url);
 
-
-
-    }
+        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
+        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        pricetv.setText(getString(R.string.usdt));
+        fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
+        fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+     }
 
     @Override
     public void onBackPressed() {
@@ -209,6 +211,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent in =new Intent(this,ChartActivity.class);
+            startActivity(in);
             return true;
         }
 
@@ -226,7 +230,7 @@ public class MainActivity extends AppCompatActivity
            startActivity(in);
 
         } else if (id == R.id.settings) {
-            Intent in =new Intent(this,SettingActivity.class);
+            Intent in =new Intent(this,ChartActivity.class);
             startActivity(in);
         } else if (id == R.id.testdata) {
             Intent in =new Intent(this,TestDataActivity.class);
@@ -249,7 +253,11 @@ public class MainActivity extends AppCompatActivity
 
     public class OkHttpHandler extends AsyncTask<String,String,String>{
 
+        @Override
+        protected void onPreExecute() {
 
+            super.onPreExecute();
+        }
 
         @Override
         protected String doInBackground(String...params) {
@@ -272,7 +280,7 @@ public class MainActivity extends AppCompatActivity
                         throw new IOException("Unexpected code " + response);
                     }
 
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     Log.i("count"," "+i+" "+count);
                     count++;
                     publishProgress(response.body().string());
@@ -293,10 +301,11 @@ public class MainActivity extends AppCompatActivity
             if(s!=null)
                 Log.i("data",s);
             else Log.i("data","data not found");
-            coinList.clear();
+
             try {
                 JSONObject job=new JSONObject(s);
                 JSONArray jsonArray =job.getJSONArray("data");
+                coinList.clear();
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject json_obj = jsonArray.getJSONObject(i);
                     coinList.add(new Coin(
@@ -337,7 +346,6 @@ public class MainActivity extends AppCompatActivity
                             json_obj.getString("Volume_ETH"),
                             json_obj.getString("Sponsored").equals("true")?true:false
                     ));
-
                 }//end for
                 Coin c;
                 for(int i=0;i<coinList.size();i++){
@@ -387,8 +395,6 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-
-
         }
 
         @Override
@@ -398,7 +404,7 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-    void btcClick(){
+    void usdClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
@@ -411,13 +417,13 @@ public class MainActivity extends AppCompatActivity
 //                rows.add(new row("abc","฿ "+String.format("%.2f", i*15.6*2),String.format("%.2f", i*6.8),false));
 
         recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.btct));
-        fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
-        fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+        pricetv.setText(getString(R.string.usdt));
+        fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
+        fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
     }
-    void ethClick(){
+    void euroClick(){
         // eurotv.setTextColor(Color.WHITE);
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
@@ -431,13 +437,14 @@ public class MainActivity extends AppCompatActivity
 //                rows.add(new row("abc","ð "+String.format("%.2f", i*15.6*3),String.format("%.2f", i*6.8),false));
 //
         recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.etht));
-        fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
-        fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
+        pricetv.setText(getString(R.string.eutot));
+        fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab2tv.setTextColor(getResources().getColor(R.color.colorwhite));
+        fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+
     }
-    void euroClick(){
+    void btcClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
@@ -449,13 +456,15 @@ public class MainActivity extends AppCompatActivity
 //            else
 //                rows.add(new row("abc","€ "+String.format("%.2f", i*15.6*4),String.format("%.2f", i*6.8),false));
         recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.eutot));
-        fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
-        fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-    }
-    void usdClick(){
+        pricetv.setText(getString(R.string.btct));
+        fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab3tv.setTextColor(getResources().getColor(R.color.colorwhite));
+        fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+   }
+
+
+    void inrClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
@@ -467,11 +476,11 @@ public class MainActivity extends AppCompatActivity
 //            else
 //                rows.add(new row("abc","$ "+String.format("%.2f", i*15.6*5),String.format("%.2f", i*6.8),false));
         recyclerView.setAdapter(new MyAdapter(MainActivity.this,coinList));
-        pricetv.setText(getString(R.string.usdt));
-        fab1.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab2.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab3.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorPrimary),PorterDuff.Mode.SRC_IN);
-        fab4.getDrawable().mutate().setColorFilter(MainActivity.this.getResources().getColor(R.color.colorwhite),PorterDuff.Mode.SRC_IN);
+        pricetv.setText(getString(R.string.inrt));
+        fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        fab4tv.setTextColor(getResources().getColor(R.color.colorwhite));
     }
 
 }

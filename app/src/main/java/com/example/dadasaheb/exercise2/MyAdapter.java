@@ -40,8 +40,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.changetv.setText(myrows.get(position).Change_BTC);
         Picasso.with(ctx).load(myrows.get(position).ImageUrl).rotate(0).into(holder.img1);
         }
-        else if(selectedButton.equals("eth"))
-        {holder.pricetv.setText("ð "+myrows.get(position).Price_ETH);
+        else if(selectedButton.equals("inr"))
+        {holder.pricetv.setText("₹ "+myrows.get(position).Price_ETH);
         holder.changetv.setText(myrows.get(position).Change_ETH);
         Picasso.with(ctx).load(myrows.get(position).ImageUrl).rotate(0).into(holder.img1);
         }
@@ -68,7 +68,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.imgnext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent in=new Intent(ctx,Main2Activity.class);
+                Intent in=new Intent(ctx,ChartActivity.class);
                 in.putExtra("Name",holder.nametv.getText().toString());
                 in.putExtra("Price",holder.pricetv.getText().toString());
                 in.putExtra("Change",holder.changetv.getText().toString());

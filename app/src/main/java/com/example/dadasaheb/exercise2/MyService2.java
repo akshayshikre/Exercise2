@@ -7,12 +7,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -20,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,7 +51,7 @@ public class MyService2 extends Service {
         PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
 
 
-        Intent nextIntent = new Intent(this, SettingActivity.class);
+        Intent nextIntent = new Intent(this, ChartActivity.class);
         nextIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         nextIntent.setAction(Constants.ACTION.SETTING_ACTION);
         PendingIntent pnextIntent = PendingIntent.getActivity(this, 0, nextIntent, 0);

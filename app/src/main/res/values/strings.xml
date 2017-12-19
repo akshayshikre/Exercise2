@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="btct">Price(฿)</string>
-    <string name="etht">Price(ð)</string>
+    <string name="inrt">Price(₹)</string>
     <string name="eutot">Price(€)</string>
     <string name="usdt">Price($)</string>
 </resources>

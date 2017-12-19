@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fa_inr">&#xf156;</string>
+    <string name="fa_usd">&#xf155;</string>
+    <string name="fa_btc">&#xf15a;</string>
+    <string name="fa_euro">&#xf153;</string>
+    <string name="fa_bell">&#xf0f3;</string>
+    <string name="fa_area_chart">&#xf1fe;</string>
+    <string name="fa_line_chart">&#xf201;</string>
+    <string name="fa_angle_double_down">&#xf103;</string>
+    <string name="fa_sort_up">&#xf0de;</string>
+    <string name="fa_sort_down">&#xf0dd;</string>
+</resources>
