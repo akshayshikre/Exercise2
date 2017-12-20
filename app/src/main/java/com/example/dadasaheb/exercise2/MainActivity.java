@@ -1,6 +1,10 @@
 package com.example.dadasaheb.exercise2;
 
+import android.content.AsyncTaskLoader;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -26,38 +30,60 @@ import java.util.ArrayList;
 import android.util.Log;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
+import java.util.Observable;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.*;
+import java.util.Observable.*;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String MY_PREFS= "sharedprefs";
-    int count;
-    Intent in;
-    MyAdapter customAdapter;
+
     RecyclerView recyclerView;
+    MyAdapter customAdapter;
     Typeface font;
     TextView pricetv,changedtv;
-    ArrayList<Coin> coinList= new ArrayList<Coin>();
     FloatingActionButton fab1,fab2,fab3,fab4,fab5;
     TextView fab1tv,fab2tv,fab3tv,fab4tv,fab5tv;
-    OkHttpClient client = new OkHttpClient();
+    private IntentFilter mIntentFilter;
+
+    public static ArrayList<Coin> coinList= new ArrayList<Coin>();
+
+    public static final String MY_PREFS= "sharedprefs";
+
+    public static String updateAvailable = "first";
     public static String selectedButton ="usd";
     public static String pricesort ="down";
     public static String changesort ="down";
     public static String selectedsort ="price";
     public static String url= "https://cryptocurrencyapp.herokuapp.com/getCoinList";
+
+    private BroadcastReceiver listReceiver =new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getStringExtra("arraylist").equals("changed"))
+            {
+                if (selectedsort.equals("price")) mpricesort();
+                else if (selectedsort.equals("change")) mchangesort();
+            customAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+    @Override
+    protected void onPause() {
+        unregisterReceiver(listReceiver);
+        super.onPause();
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -78,9 +104,13 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
-//        Intent startintent = new Intent(this, MyService3.class);
-//        startintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-//        startService(startintent);
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(Constants.ACTION.mBroadcastArrayListAction);
+        registerReceiver(listReceiver, mIntentFilter);
+
+        Intent startintent = new Intent(this, MyService2.class);
+        startintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        startService(startintent);
 
         /**buit code**/
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -197,8 +227,8 @@ public class MainActivity extends AppCompatActivity
 
             }
         });*/
-        OkHttpHandler okHttpHandler= new OkHttpHandler();
-        okHttpHandler.execute(url);
+//        OkHttpHandler okHttpHandler= new OkHttpHandler();
+//        okHttpHandler.execute(url);
 
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
@@ -223,6 +253,8 @@ public class MainActivity extends AppCompatActivity
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
+        customAdapter = new MyAdapter(MainActivity.this, coinList);
+        recyclerView.setAdapter(customAdapter);
      }
 
     @Override
@@ -291,165 +323,195 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public class OkHttpHandler extends AsyncTask<String,String,String>{
-        Boolean first=true;
-        @Override
-        protected void onPreExecute() {
+//    public class OkHttpHandler extends AsyncTask<String,String,String>{
+//        Boolean first=true;
+//        @Override
+//        protected void onPreExecute() {
+//
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected String doInBackground(String...params) {
+//
+//            OkHttpClient client = new OkHttpClient.Builder()
+//                    .connectTimeout(100, TimeUnit.SECONDS)
+//                    .writeTimeout(10, TimeUnit.SECONDS)
+//                    .readTimeout(20, TimeUnit.SECONDS).build();
+//
+//
+//            for(int i=0;i<999;i++)
+//                try {
+//
+//                    Request request = new Request.Builder()
+//                            .url(url)
+//                            .build();
+//
+//                    Response response = client.newCall(request).execute();
+//                    if (!response.isSuccessful()) {
+//                        throw new IOException("Unexpected code " + response);
+//                    }
+//
+//                    Thread.sleep(2000);
+//                    Log.i("count"," "+i+" "+count);
+//                    count++;
+//                    publishProgress(response.body().string());
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+//            return "end";
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+//            String s=values[0];
+//
+//            if(s!=null)
+//                Log.i("data",s);
+//            else Log.i("data","data not found");
+//
+//            try {
+//                JSONObject job=new JSONObject(s);
+//                JSONArray jsonArray =job.getJSONArray("data");
+//                coinList.clear();
+//                for(int i=0;i<jsonArray.length();i++){
+//                    JSONObject json_obj = jsonArray.getJSONObject(i);
+//                    coinList.add(new Coin(
+//                            //    "Id":"4321","Url":"/coins/42/overview",
+////            "ImageUrl":"https://www.cryptocompare.com/media/12318415/42.png",
+////            "Name":"42","Symbol":"42","CoinName":"42 Coin","FullName":"42 Coin (42)",
+////            "Algorithm":"Scrypt","ProofType":"PoW/PoS","FullyPremined":"0",
+////            "TotalCoinSupply":"42","PreMinedValue":"N/A",
+////            "TotalCoinsFreeFloat":"N/A","SortOrder":"34","Sponsored":false,
+////            "Price_USD":38245.779,"Change_USD":-11.7,"Volume_USD":0,"Price_EUR":32180.031,
+////            "Change_EUR":-11.7,"Volume_EUR":0,"Price_BTC":2.34,"Change_BTC":-11.7,
+////            "Volume_BTC":0.15,"Price_ETH":52.3139,"Change_ETH":-11.7,"Volume_ETH":0},
+//                            json_obj.getString("Id"),
+//                            json_obj.getString("Url"),
+//                            json_obj.getString("ImageUrl"),
+//                            json_obj.getString("Name"),
+//                            json_obj.getString("Symbol"),
+//                            json_obj.getString("CoinName"),
+//                            json_obj.getString("FullName"),
+//                            json_obj.getString("Algorithm"),
+//                            json_obj.getString("ProofType"),
+//                            json_obj.getString("FullyPremined"),
+//                            json_obj.getString("TotalCoinSupply"),
+//                            json_obj.getString("PreMinedValue"),
+//                            json_obj.getString("TotalCoinsFreeFloat"),
+//                            json_obj.getString("SortOrder"),
+//                            json_obj.getString("Price_USD"),
+//                            json_obj.getString("Change_USD"),
+//                            json_obj.getString("Volume_USD"),
+//                            json_obj.getString("Price_EUR"),
+//                            json_obj.getString("Change_EUR"),
+//                            json_obj.getString("Volume_EUR"),
+//                            json_obj.getString("Price_BTC"),
+//                            json_obj.getString("Change_BTC"),
+//                            json_obj.getString("Volume_BTC"),
+//                            json_obj.getString("Price_ETH"),
+//                            json_obj.getString("Change_ETH"),
+//                            json_obj.getString("Volume_ETH"),
+//                            json_obj.getString("Sponsored").equals("true")?true:false
+//                    ));
+//                }//end for
+//                Coin c;
+//                for(int i=0;i<coinList.size();i++){
+//                    c=coinList.get(i);
+//                    Log.i("coinList data",
+//                            c.Id+" "+
+//                                    c.Url+" "+
+//                                    c.ImageUrl+" "+
+//                                    c.Name+" "+
+//                                    c.Symbol+" "+
+//                                    c.CoinName+" "+
+//                                    c.FullName+" "+
+//                                    c.Algorithm+" "+
+//                                    c.ProofType+" "+
+//                                    c.FullyPremined+" "+
+//                                    c.TotalCoinSupply+" "+
+//                                    c.PreMinedValue+" "+
+//                                    c.TotalCoinsFreeFloat+" "+
+//                                    c.SortOrder+" "+
+//                                    c.Price_USD+" "+
+//                                    c.Change_USD+" "+
+//                                    c.Volume_USD+" "+
+//                                    c.Price_EUR+" "+
+//                                    c.Change_EUR+" "+
+//                                    c.Volume_EUR+" "+
+//                                    c.Price_BTC+" "+
+//                                    c.Change_BTC+" "+
+//                                    c.Volume_BTC+" "+
+//                                    c.Price_ETH+" "+
+//                                    c.Change_ETH+" "+
+//                                    c.Volume_ETH+" "+
+//                                    c.Sponsored+" "
+//                    );
+//                }
+//                /*Collections.sort(coinList, new Comparator<Coin>() {
+//                    @Override
+//                    public int compare(Coin coin, Coin t1) {
+//                        String s1 = coin.SortOrder;
+//                        String s2 = t1.SortOrder;
+//                        return s1.compareToIgnoreCase(s2);
+//                    }
+//
+//                });*/
+//                if(selectedsort.equals("price")) mpricesort();
+//                else if(selectedsort.equals("change")) mchangesort();
+//                if(first==true) {
+//                    customAdapter = new MyAdapter(MainActivity.this, coinList);
+//                    recyclerView.setAdapter(customAdapter);
+//                    first=false;
+//                }
+//                else if(first==false) customAdapter.notifyDataSetChanged();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            super.onPostExecute(s);
+//
+//
+//        }
+//    }
+//    class updateData extends AsyncTask<Void,Void,Void>{
+//    public updateData() {
+//        super();
+//    }
+//
+//    @Override
+//    protected void onPreExecute() {
+//
+//        super.onPreExecute();
+//    }
+//
+//    @Override
+//    protected void onPostExecute(Void aVoid) {
+//        super.onPostExecute(aVoid);
+//
+//    }
+//
+//    @Override
+//    protected void onProgressUpdate(Void... values) {
+//        super.onProgressUpdate(values);
+//    }
+//
+//    @Override
+//    protected Void doInBackground(Void... voids) {
+//        return null;
+//    }
+//}
 
-            super.onPreExecute();
-        }
 
-        @Override
-        protected String doInBackground(String...params) {
-
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(100, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(20, TimeUnit.SECONDS).build();
-
-
-            for(int i=0;i<999;i++)
-                try {
-
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .build();
-
-                    Response response = client.newCall(request).execute();
-                    if (!response.isSuccessful()) {
-                        throw new IOException("Unexpected code " + response);
-                    }
-
-                    Thread.sleep(2000);
-                    Log.i("count"," "+i+" "+count);
-                    count++;
-                    publishProgress(response.body().string());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-            return "end";
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            String s=values[0];
-
-            if(s!=null)
-                Log.i("data",s);
-            else Log.i("data","data not found");
-
-            try {
-                JSONObject job=new JSONObject(s);
-                JSONArray jsonArray =job.getJSONArray("data");
-                coinList.clear();
-                for(int i=0;i<jsonArray.length();i++){
-                    JSONObject json_obj = jsonArray.getJSONObject(i);
-                    coinList.add(new Coin(
-                            //    "Id":"4321","Url":"/coins/42/overview",
-//            "ImageUrl":"https://www.cryptocompare.com/media/12318415/42.png",
-//            "Name":"42","Symbol":"42","CoinName":"42 Coin","FullName":"42 Coin (42)",
-//            "Algorithm":"Scrypt","ProofType":"PoW/PoS","FullyPremined":"0",
-//            "TotalCoinSupply":"42","PreMinedValue":"N/A",
-//            "TotalCoinsFreeFloat":"N/A","SortOrder":"34","Sponsored":false,
-//            "Price_USD":38245.779,"Change_USD":-11.7,"Volume_USD":0,"Price_EUR":32180.031,
-//            "Change_EUR":-11.7,"Volume_EUR":0,"Price_BTC":2.34,"Change_BTC":-11.7,
-//            "Volume_BTC":0.15,"Price_ETH":52.3139,"Change_ETH":-11.7,"Volume_ETH":0},
-                            json_obj.getString("Id"),
-                            json_obj.getString("Url"),
-                            json_obj.getString("ImageUrl"),
-                            json_obj.getString("Name"),
-                            json_obj.getString("Symbol"),
-                            json_obj.getString("CoinName"),
-                            json_obj.getString("FullName"),
-                            json_obj.getString("Algorithm"),
-                            json_obj.getString("ProofType"),
-                            json_obj.getString("FullyPremined"),
-                            json_obj.getString("TotalCoinSupply"),
-                            json_obj.getString("PreMinedValue"),
-                            json_obj.getString("TotalCoinsFreeFloat"),
-                            json_obj.getString("SortOrder"),
-                            json_obj.getString("Price_USD"),
-                            json_obj.getString("Change_USD"),
-                            json_obj.getString("Volume_USD"),
-                            json_obj.getString("Price_EUR"),
-                            json_obj.getString("Change_EUR"),
-                            json_obj.getString("Volume_EUR"),
-                            json_obj.getString("Price_BTC"),
-                            json_obj.getString("Change_BTC"),
-                            json_obj.getString("Volume_BTC"),
-                            json_obj.getString("Price_ETH"),
-                            json_obj.getString("Change_ETH"),
-                            json_obj.getString("Volume_ETH"),
-                            json_obj.getString("Sponsored").equals("true")?true:false
-                    ));
-                }//end for
-                Coin c;
-                for(int i=0;i<coinList.size();i++){
-                    c=coinList.get(i);
-                    Log.i("coinList data",
-                            c.Id+" "+
-                                    c.Url+" "+
-                                    c.ImageUrl+" "+
-                                    c.Name+" "+
-                                    c.Symbol+" "+
-                                    c.CoinName+" "+
-                                    c.FullName+" "+
-                                    c.Algorithm+" "+
-                                    c.ProofType+" "+
-                                    c.FullyPremined+" "+
-                                    c.TotalCoinSupply+" "+
-                                    c.PreMinedValue+" "+
-                                    c.TotalCoinsFreeFloat+" "+
-                                    c.SortOrder+" "+
-                                    c.Price_USD+" "+
-                                    c.Change_USD+" "+
-                                    c.Volume_USD+" "+
-                                    c.Price_EUR+" "+
-                                    c.Change_EUR+" "+
-                                    c.Volume_EUR+" "+
-                                    c.Price_BTC+" "+
-                                    c.Change_BTC+" "+
-                                    c.Volume_BTC+" "+
-                                    c.Price_ETH+" "+
-                                    c.Change_ETH+" "+
-                                    c.Volume_ETH+" "+
-                                    c.Sponsored+" "
-                    );
-                }
-                /*Collections.sort(coinList, new Comparator<Coin>() {
-                    @Override
-                    public int compare(Coin coin, Coin t1) {
-                        String s1 = coin.SortOrder;
-                        String s2 = t1.SortOrder;
-                        return s1.compareToIgnoreCase(s2);
-                    }
-
-                });*/
-                if(selectedsort.equals("price")) mpricesort();
-                else if(selectedsort.equals("change")) mchangesort();
-                if(first==true) {
-                    customAdapter = new MyAdapter(MainActivity.this, coinList);
-                    recyclerView.setAdapter(customAdapter);
-                    first=false;
-                }
-                else if(first==false) customAdapter.notifyDataSetChanged();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-
-        }
-    }
+//All methods
     void usdClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
@@ -525,8 +587,6 @@ public class MainActivity extends AppCompatActivity
         }
         customAdapter.notifyDataSetChanged();
    }
-
-
     void inrClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
@@ -552,6 +612,7 @@ public class MainActivity extends AppCompatActivity
         }
         customAdapter.notifyDataSetChanged();
     }
+
     void mpricesort(){
         Collections.sort(coinList, new Comparator<Coin>() {
             @Override

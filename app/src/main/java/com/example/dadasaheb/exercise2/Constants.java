@@ -11,6 +11,7 @@ public class Constants {
         public static String SETTING_ACTION="com.example.dadasaheb.exercise2.setting";
         public static String STARTFOREGROUND_ACTION="com.example.dadasaheb.exercise2.startforeground";
         public static String STOPFOREGROUND_ACTION="com.example.dadasaheb.exercise2.stopforeground";
+        public static String mBroadcastArrayListAction = "com.example.dadasaheb.exercise2.arraylist";
     }
     public interface NOTIFICATION_ID{
         public static int FOREGROUND_SERVICE=999;

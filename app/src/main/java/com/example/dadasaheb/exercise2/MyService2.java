@@ -4,33 +4,41 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static com.example.dadasaheb.exercise2.MainActivity.url;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 public class MyService2 extends Service {
-    ArrayList<Coin> coinList= new ArrayList<Coin>();
-    int count,
-            click;
+    int count, click;
+    String Flag="notchanged";
     NotificationCompat.Builder notificationbldr;
     public MyService2() {
     }
@@ -68,7 +76,8 @@ public class MyService2 extends Service {
                 .addAction(android.R.drawable.ic_menu_manage, "Setting", pnextIntent);
 
 
-        new MyTask().execute();
+        //new MyTask().execute();
+        new OkHttpHandler().execute();
         super.onCreate();
     }
 
@@ -126,32 +135,108 @@ public class MyService2 extends Service {
 
 
 
-    class MyTask extends AsyncTask<String,String,String> {
+    class MyTask extends AsyncTask<Void,Integer,Void> {
+        Intent in;
+        PendingIntent pi;
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(100, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS).build();
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            SharedPreferences sp=getSharedPreferences(MainActivity.MY_PREFS,MODE_PRIVATE);
+            count=sp.getInt("counter",0);
+
+            Log.i("Method"," in onPreExecute"+" "+count);
+        }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Notification notification=notificationbldr.setContentText("Thread count"+count++).build();
+            NotificationManager notimgr= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // noti.flags |=Notification.FLAG_AUTO_CANCEL;
+            notimgr.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,notification);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            for(int i=0;i<999;i++)
+                try {
+                    Thread.sleep(1000);
+                    Log.i("count"," "+i+" "+count);
+                    count++;
+                    publishProgress(count);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            return null;
+        }
+    }
+    class OkHttpHandler extends AsyncTask<String,String,String>{
+        Boolean first=true;
+        @Override
+        protected void onPreExecute() {
+            Log.i("onPreExecute","okhttp");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String...params) {
+            Log.i("doInBackground","okhttp");
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(100, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS).build();
+
+
+            for(int i=0;i<9999;i++)
+                try {
+
+                    Request request = new Request.Builder()
+                            .url(MainActivity.url)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+                    if (!response.isSuccessful()) {
+                        throw new IOException("Unexpected code " + response);
+                    }
+
+                    Thread.sleep(2000);
+                    Log.i("count"," "+i+" "+count);
+                    count++;
+                    publishProgress(response.body().string());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            return "end";
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
+            Log.i("onProgressUpdate","okhttp");
             super.onProgressUpdate(values);
             String s=values[0];
-            super.onPostExecute(s);
+
             if(s!=null)
                 Log.i("data",s);
             else Log.i("data","data not found");
+
             try {
                 JSONObject job=new JSONObject(s);
                 JSONArray jsonArray =job.getJSONArray("data");
+                MainActivity.coinList.clear();
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject json_obj = jsonArray.getJSONObject(i);
-                    coinList.add(new Coin(
+                    MainActivity.coinList.add(new Coin(
                             //    "Id":"4321","Url":"/coins/42/overview",
 //            "ImageUrl":"https://www.cryptocompare.com/media/12318415/42.png",
 //            "Name":"42","Symbol":"42","CoinName":"42 Coin","FullName":"42 Coin (42)",
@@ -189,11 +274,10 @@ public class MyService2 extends Service {
                             json_obj.getString("Volume_ETH"),
                             json_obj.getString("Sponsored").equals("true")?true:false
                     ));
-
                 }//end for
                 Coin c;
-                for(int i=0;i<coinList.size();i++){
-                    c=coinList.get(i);
+                for(int i=0;i<MainActivity.coinList.size();i++){
+                    c=MainActivity.coinList.get(i);
                     Log.i("coinList data",
                             c.Id+" "+
                                     c.Url+" "+
@@ -223,17 +307,28 @@ public class MyService2 extends Service {
                                     c.Volume_ETH+" "+
                                     c.Sponsored+" "
                     );
-                    Collections.sort(coinList, new Comparator<Coin>() {
-                        @Override
-                        public int compare(Coin coin, Coin t1) {
-                            String s1 = coin.SortOrder;
-                            String s2 = t1.SortOrder;
-                            return s1.compareToIgnoreCase(s2);
-                        }
-
-                    });
-
                 }
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(Constants.ACTION.mBroadcastArrayListAction);
+                broadcastIntent.putExtra("arraylist","changed");
+                sendBroadcast(broadcastIntent);
+                /*Collections.sort(coinList, new Comparator<Coin>() {
+                    @Override
+                    public int compare(Coin coin, Coin t1) {
+                        String s1 = coin.SortOrder;
+                        String s2 = t1.SortOrder;
+                        return s1.compareToIgnoreCase(s2);
+                    }
+
+                });*/
+               /* if(selectedsort.equals("price")) mpricesort();
+                else if(selectedsort.equals("change")) mchangesort();
+                if(first==true) {
+                    customAdapter = new MyAdapter(MainActivity.this, coinList);
+                    recyclerView.setAdapter(customAdapter);
+                    first=false;
+                }
+                else if(first==false) customAdapter.notifyDataSetChanged();*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -241,33 +336,11 @@ public class MyService2 extends Service {
         }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
 
-            for (int i = 0; i < 999; i++)
-                try {
-                    Thread.sleep(10000);
-                    Log.i("count", " " + i + " " + count);
-                    Request request = new Request.Builder().url(url).build();
-                    Response response = client.newCall(request).execute();
-                    count++;
-                    publishProgress(response.body().string());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            return null;
+
         }
-
-
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            SharedPreferences sp=getSharedPreferences(MainActivity.MY_PREFS,MODE_PRIVATE);
-            count=sp.getInt("counter",0);
-            Log.i("Method"," in onPreExecute"+" "+count);
-        }
-
     }
 
 
