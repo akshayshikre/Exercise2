@@ -26,7 +26,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
 import android.util.Log;
 
 
@@ -42,11 +41,14 @@ import java.util.Observable.*;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+//    ListReceiver lr =new ListReceiver();
     RecyclerView recyclerView;
-    MyAdapter customAdapter;
+    public static MyAdapter customAdapter;
     Typeface font;
-    TextView pricetv,changedtv;
+    static TextView pricetv;
+    static TextView changedtv;
+
+
     FloatingActionButton fab1,fab2,fab3,fab4,fab5;
     TextView fab1tv,fab2tv,fab3tv,fab4tv,fab5tv;
     private IntentFilter mIntentFilter;
@@ -55,33 +57,44 @@ public class MainActivity extends AppCompatActivity
 
     public static final String MY_PREFS= "sharedprefs";
 
-    public static String updateAvailable = "first";
+    public static String appAvailable = "first";
     public static String selectedButton ="usd";
     public static String pricesort ="down";
     public static String changesort ="down";
     public static String selectedsort ="price";
+    public static String fa_sort_down="";
+    public static String fa_sort_up="";
+    public static String usdt="";
+    public static String eutot="";
+    public static String btct="";
+    public static String inrt="";
+
     public static String url= "https://cryptocurrencyapp.herokuapp.com/getCoinList";
 
-    private BroadcastReceiver listReceiver =new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra("arraylist").equals("changed"))
-            {
-                if (selectedsort.equals("price")) mpricesort();
-                else if (selectedsort.equals("change")) mchangesort();
-            customAdapter.notifyDataSetChanged();
-            }
-        }
-    };
+//    private BroadcastReceiver listReceiver =new BroadcastReceiver() {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if(appAvailable.equals("first")||appAvailable.equals("true"))
+//            if (intent.getStringExtra("arraylist").equals("changed"))
+//            {
+//                if (selectedsort.equals("price")) mpricesort();
+//                else if (selectedsort.equals("change")) mchangesort();
+//            customAdapter.notifyDataSetChanged();
+//            Log.i("receiver","chanaged "+appAvailable);
+//            }
+//        }
+//    };
     @Override
     public void onResume() {
+        appAvailable="true";
         super.onResume();
 
     }
     @Override
     protected void onPause() {
-        unregisterReceiver(listReceiver);
+        appAvailable="false";
+//        unregisterReceiver(listReceiver);
         super.onPause();
     }
 
@@ -90,23 +103,31 @@ public class MainActivity extends AppCompatActivity
         //ScrollView sv = (ScrollView) findViewById(R.id.scrollView);
         //sv.scrollTo(0, 0);
     }
-/*
+
     @Override
     protected void onDestroy() {
-        stopService(in);
+        appAvailable="false";
         super.onDestroy();
-    }*/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
-        mIntentFilter=new IntentFilter();
-        mIntentFilter.addAction(Constants.ACTION.mBroadcastArrayListAction);
-        registerReceiver(listReceiver, mIntentFilter);
+        appAvailable="true";
+        fa_sort_down=getString(R.string.fa_sort_down);
+        fa_sort_up=getString(R.string.fa_sort_up);
+        usdt=getString(R.string.usdt);
+        eutot=getString(R.string.eutot);
+        btct=getString(R.string.btct);
+        inrt=getString(R.string.inrt);
+//        mIntentFilter=new IntentFilter();
+//        mIntentFilter.addAction(Constants.ACTION.mBroadcastArrayListAction);
+//        registerReceiver(listReceiver, mIntentFilter);
 
         Intent startintent = new Intent(this, MyService2.class);
         startintent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
@@ -613,7 +634,7 @@ public class MainActivity extends AppCompatActivity
         customAdapter.notifyDataSetChanged();
     }
 
-    void mpricesort(){
+    static void mpricesort(){
         Collections.sort(coinList, new Comparator<Coin>() {
             @Override
             public int compare(Coin coin, Coin t1) {
@@ -635,10 +656,10 @@ public class MainActivity extends AppCompatActivity
                     s2 = t1.Price_ETH;
                 }
                 if(pricesort.equals("down")) {
-                    return -s1.compareToIgnoreCase(s2);
+                    return (int)(-(Double.valueOf(s1)-Double.valueOf(s2)));
                 }
                 else if (pricesort.equals("up")) {
-                    return s1.compareToIgnoreCase(s2);
+                    return (int)(Double.valueOf(s1)-Double.valueOf(s2));
                 }
                 else return 0;
             }
@@ -647,28 +668,28 @@ public class MainActivity extends AppCompatActivity
         if(pricesort.equals("down")){
 
             if(selectedButton.equals("usd"))
-                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.usdt));
+                pricetv.setText(fa_sort_down+" "+usdt);
             else if(selectedButton.equals("euro"))
-                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.eutot));
+                pricetv.setText(fa_sort_down+" "+eutot);
             else if(selectedButton.equals("btc"))
-                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.btct));
+                pricetv.setText(fa_sort_down+" "+btct);
             else if(selectedButton.equals("inr"))
-                pricetv.setText(getString(R.string.fa_sort_down)+" "+getString(R.string.inrt));
+                pricetv.setText(fa_sort_down+" "+inrt);
         }
         else if(pricesort.equals("up")){
 
             if(selectedButton.equals("usd"))
-                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.usdt));
+                pricetv.setText(fa_sort_up+" "+usdt);
             else if(selectedButton.equals("euro"))
-                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.eutot));
+                pricetv.setText(fa_sort_up+" "+eutot);
             else if(selectedButton.equals("btc"))
-                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.btct));
+                pricetv.setText(fa_sort_up+" "+btct);
             else if(selectedButton.equals("inr"))
-                pricetv.setText(getString(R.string.fa_sort_up)+" "+getString(R.string.inrt));
+                pricetv.setText(fa_sort_up+" "+inrt);
         }
         changedtv.setText("CHANGE");
     }
-    void mchangesort(){
+    static void mchangesort(){
         Collections.sort(coinList, new Comparator<Coin>() {
             @Override
             public int compare(Coin coin, Coin t1) {
@@ -691,10 +712,11 @@ public class MainActivity extends AppCompatActivity
                     s2 = t1.Change_ETH;
                 }
                 if(changesort.equals("down")) {
-                    return -s1.compareToIgnoreCase(s2);
+
+                    return (int)(-(Double.valueOf(s1)-Double.valueOf(s2)));
                 }
                 else if (changesort.equals("up")) {
-                    return s1.compareToIgnoreCase(s2);
+                    return (int)(Double.valueOf(s1)-Double.valueOf(s2));
                 }
                 else return 0;
             }
@@ -702,33 +724,33 @@ public class MainActivity extends AppCompatActivity
         if(changesort.equals("down")){
 
             if(selectedButton.equals("usd"))
-                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+                changedtv.setText(fa_sort_down+" CHANGE");
             else if(selectedButton.equals("euro"))
-                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+                changedtv.setText(fa_sort_down+" CHANGE");
             else if(selectedButton.equals("btc"))
-                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+                changedtv.setText(fa_sort_down+" CHANGE");
             else if(selectedButton.equals("inr"))
-                changedtv.setText(getString(R.string.fa_sort_down)+" CHANGE");
+                changedtv.setText(fa_sort_down+" CHANGE");
         }
         else if(changesort.equals("up")){
 
             if(selectedButton.equals("usd"))
-                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+                changedtv.setText(fa_sort_up+" CHANGE");
             else if(selectedButton.equals("euro"))
-                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+                changedtv.setText(fa_sort_up+" CHANGE");
             else if(selectedButton.equals("btc"))
-                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+                changedtv.setText(fa_sort_up+" CHANGE");
             else if(selectedButton.equals("inr"))
-                changedtv.setText(getString(R.string.fa_sort_up)+" CHANGE");
+                changedtv.setText(fa_sort_up+" CHANGE");
         }
 
         if(selectedButton.equals("usd"))
-            pricetv.setText(getString(R.string.usdt));
+            pricetv.setText(usdt);
         else if(selectedButton.equals("euro"))
-            pricetv.setText(getString(R.string.eutot));
+            pricetv.setText(eutot);
         else if(selectedButton.equals("btc"))
-            pricetv.setText(getString(R.string.btct));
+            pricetv.setText(btct);
         else if(selectedButton.equals("inr"))
-            pricetv.setText(getString(R.string.inrt));
+            pricetv.setText(inrt);
     }
 }

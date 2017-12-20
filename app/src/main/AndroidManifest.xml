@@ -59,6 +59,15 @@
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" />
 
+        <receiver
+            android:name=".ListReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.dadasaheb.exercise2.arraylist"/>
+
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

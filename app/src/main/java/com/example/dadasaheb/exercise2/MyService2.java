@@ -308,10 +308,12 @@ public class MyService2 extends Service {
                                     c.Sponsored+" "
                     );
                 }
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(Constants.ACTION.mBroadcastArrayListAction);
-                broadcastIntent.putExtra("arraylist","changed");
-                sendBroadcast(broadcastIntent);
+                if(MainActivity.appAvailable.equals("true") || MainActivity.appAvailable.equals("first")) {
+                    Intent broadcastIntent = new Intent();
+                    broadcastIntent.setAction(Constants.ACTION.mBroadcastArrayListAction);
+                    broadcastIntent.putExtra("arraylist", "changed");
+                    sendBroadcast(broadcastIntent);
+                }
                 /*Collections.sort(coinList, new Comparator<Coin>() {
                     @Override
                     public int compare(Coin coin, Coin t1) {
