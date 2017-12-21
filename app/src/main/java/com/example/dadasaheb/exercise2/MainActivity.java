@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity
     Typeface font;
     static TextView pricetv;
     static TextView changedtv;
+    static TextView priceupperarrow;
+    static TextView changeupperarrow;
 
 
     FloatingActionButton fab1,fab2,fab3,fab4,fab5;
@@ -163,13 +165,16 @@ public class MainActivity extends AppCompatActivity
         fab5tv = (TextView)findViewById( R.id.fab5tv );
         pricetv = (TextView)findViewById( R.id.pricetv );
         changedtv = (TextView)findViewById( R.id.changedtv );
+        priceupperarrow = (TextView)findViewById( R.id.priceupperarrow );
+        changeupperarrow = (TextView)findViewById( R.id.changeupperarrow );
+
         fab1tv.setTypeface(font);
         fab2tv.setTypeface(font);
         fab3tv.setTypeface(font);
         fab4tv.setTypeface(font);
         fab5tv.setTypeface(font);
-        pricetv.setTypeface(font);
-        changedtv.setTypeface(font);
+        priceupperarrow.setTypeface(font);
+        changeupperarrow.setTypeface(font);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         ScrollView scrollView =(ScrollView)findViewById(R.id.recscroll);
@@ -190,6 +195,7 @@ public class MainActivity extends AppCompatActivity
         pricetv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //rippleBackground.startRippleAnimation();
             selectedsort="price";
             if(pricesort.equals("down")) pricesort="up";
             else if(pricesort.equals("up")) pricesort="down";
@@ -252,23 +258,22 @@ public class MainActivity extends AppCompatActivity
 //        okHttpHandler.execute(url);
 
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
-        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        if(selectedsort.equals("price")) {
-            if (pricesort.equals("down"))
-                pricetv.setText(getString(R.string.fa_sort_down) + " " + getString(R.string.usdt));
-            else if (pricesort.equals("up"))
-                pricetv.setText(getString(R.string.fa_sort_up) + " " + getString(R.string.usdt));
-            changedtv.setText("CHANGE");
+        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        if(selectedsort.equals("price")){
+            if(pricesort.equals("down"))
+                priceupperarrow.setText(getString(R.string.fa_sort_down));
+            else if(pricesort.equals("up"))
+                priceupperarrow.setText(getString(R.string.fa_sort_up));
+            changeupperarrow.setText(" ");
         }
-        else if(selectedsort.equals("change"))
-        {
-            if (changesort.equals("down"))
-                changedtv.setText(getString(R.string.fa_sort_down) + "CHANGE");
-            else if (pricesort.equals("up"))
-                changedtv.setText(getString(R.string.fa_sort_up) + "CHANGE");
-            pricetv.setText(getString(R.string.usdt));
+        else if(selectedsort.equals("change")){
+            if(changesort.equals("down"))
+                changeupperarrow.setText(getString(R.string.fa_sort_down));
+            else if(changesort.equals("up"))
+                changeupperarrow.setText(getString(R.string.fa_sort_up));
+            priceupperarrow.setText(" ");
         }
         fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -276,6 +281,17 @@ public class MainActivity extends AppCompatActivity
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         customAdapter = new MyAdapter(MainActivity.this, coinList);
         recyclerView.setAdapter(customAdapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        // do whatever
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
      }
 
     @Override
@@ -535,83 +551,83 @@ public class MainActivity extends AppCompatActivity
 //All methods
     void usdClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
-        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
         fab1tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         if(selectedsort.equals("price")){
             if(pricesort.equals("down"))
-                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.usdt));
+                priceupperarrow.setText(getString(R.string.fa_sort_down));
             else if(pricesort.equals("up"))
-                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.usdt));
-            changedtv.setText("CHANGE");
+                priceupperarrow.setText(getString(R.string.fa_sort_up));
+            changeupperarrow.setText(" ");
         }
         else if(selectedsort.equals("change")){
             if(changesort.equals("down"))
-                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+                changeupperarrow.setText(getString(R.string.fa_sort_down));
             else if(changesort.equals("up"))
-                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
-            pricetv.setText(getString(R.string.usdt));
+                changeupperarrow.setText(getString(R.string.fa_sort_up));
+            priceupperarrow.setText(" ");
         }
         customAdapter.notifyDataSetChanged();
     }
     void euroClick(){
-        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
-        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
         fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab2tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab3tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         if(selectedsort.equals("price")){
             if(pricesort.equals("down"))
-                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.eutot));
+                priceupperarrow.setText(getString(R.string.fa_sort_down));
             else if(pricesort.equals("up"))
-                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.eutot));
-            changedtv.setText("CHANGE");
+                priceupperarrow.setText(getString(R.string.fa_sort_up));
+            changeupperarrow.setText(" ");
         }
         else if(selectedsort.equals("change")){
             if(changesort.equals("down"))
-                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+                changeupperarrow.setText(getString(R.string.fa_sort_down));
             else if(changesort.equals("up"))
-                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
-            pricetv.setText(getString(R.string.eutot));
+                changeupperarrow.setText(getString(R.string.fa_sort_up));
+            priceupperarrow.setText(" ");
         }
         customAdapter.notifyDataSetChanged();
     }
     void btcClick(){
-        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
         fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
-        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
         fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab3tv.setTextColor(getResources().getColor(R.color.colorwhite));
         fab4tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         if(selectedsort.equals("price")){
             if(pricesort.equals("down"))
-                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.btct));
+                priceupperarrow.setText(getString(R.string.fa_sort_down));
             else if(pricesort.equals("up"))
-                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.btct));
-            changedtv.setText("CHANGE");
+                priceupperarrow.setText(getString(R.string.fa_sort_up));
+            changeupperarrow.setText(" ");
         }
         else if(selectedsort.equals("change")){
             if(changesort.equals("down"))
-                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+                changeupperarrow.setText(getString(R.string.fa_sort_down));
             else if(changesort.equals("up"))
-                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
-            pricetv.setText(getString(R.string.btct));
+                changeupperarrow.setText(getString(R.string.fa_sort_up));
+            priceupperarrow.setText(" ");
         }
         customAdapter.notifyDataSetChanged();
    }
     void inrClick(){
-        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
-        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorButtonsBackLayout)));
+        fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
+        fab3.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
         fab4.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab1tv.setTextColor(getResources().getColor(R.color.colorPrimary));
         fab2tv.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -619,17 +635,17 @@ public class MainActivity extends AppCompatActivity
         fab4tv.setTextColor(getResources().getColor(R.color.colorwhite));
         if(selectedsort.equals("price")){
             if(pricesort.equals("down"))
-                pricetv.setText(getString(R.string.fa_sort_down)+getString(R.string.inrt));
+                priceupperarrow.setText(getString(R.string.fa_sort_down));
             else if(pricesort.equals("up"))
-                pricetv.setText(getString(R.string.fa_sort_up)+getString(R.string.inrt));
-            changedtv.setText("CHANGE");
+                priceupperarrow.setText(getString(R.string.fa_sort_up));
+            changeupperarrow.setText(" ");
         }
         else if(selectedsort.equals("change")){
             if(changesort.equals("down"))
-                changedtv.setText(getString(R.string.fa_sort_down)+"CHANGE");
+                changeupperarrow.setText(getString(R.string.fa_sort_down));
             else if(changesort.equals("up"))
-                changedtv.setText(getString(R.string.fa_sort_up)+"CHANGE");
-            pricetv.setText(getString(R.string.inrt));
+                changeupperarrow.setText(getString(R.string.fa_sort_up));
+            priceupperarrow.setText(" ");
         }
         customAdapter.notifyDataSetChanged();
     }
@@ -656,38 +672,21 @@ public class MainActivity extends AppCompatActivity
                     s2 = t1.Price_ETH;
                 }
                 if(pricesort.equals("down")) {
-                    return (int)(-(Double.valueOf(s1)-Double.valueOf(s2)));
+                    return -Double.compare(Double.valueOf(s1),Double.valueOf(s2));
                 }
                 else if (pricesort.equals("up")) {
-                    return (int)(Double.valueOf(s1)-Double.valueOf(s2));
+                    return Double.compare(Double.valueOf(s1),Double.valueOf(s2));
                 }
                 else return 0;
             }
 
         });
-        if(pricesort.equals("down")){
-
-            if(selectedButton.equals("usd"))
-                pricetv.setText(fa_sort_down+" "+usdt);
-            else if(selectedButton.equals("euro"))
-                pricetv.setText(fa_sort_down+" "+eutot);
-            else if(selectedButton.equals("btc"))
-                pricetv.setText(fa_sort_down+" "+btct);
-            else if(selectedButton.equals("inr"))
-                pricetv.setText(fa_sort_down+" "+inrt);
-        }
+        if(pricesort.equals("down"))
+            priceupperarrow.setText(fa_sort_down);
         else if(pricesort.equals("up")){
-
-            if(selectedButton.equals("usd"))
-                pricetv.setText(fa_sort_up+" "+usdt);
-            else if(selectedButton.equals("euro"))
-                pricetv.setText(fa_sort_up+" "+eutot);
-            else if(selectedButton.equals("btc"))
-                pricetv.setText(fa_sort_up+" "+btct);
-            else if(selectedButton.equals("inr"))
-                pricetv.setText(fa_sort_up+" "+inrt);
+            priceupperarrow.setText(fa_sort_up);
         }
-        changedtv.setText("CHANGE");
+        changeupperarrow.setText(" ");
     }
     static void mchangesort(){
         Collections.sort(coinList, new Comparator<Coin>() {
@@ -713,44 +712,20 @@ public class MainActivity extends AppCompatActivity
                 }
                 if(changesort.equals("down")) {
 
-                    return (int)(-(Double.valueOf(s1)-Double.valueOf(s2)));
+                    return -Double.compare(Double.valueOf(s1),Double.valueOf(s2));
                 }
                 else if (changesort.equals("up")) {
-                    return (int)(Double.valueOf(s1)-Double.valueOf(s2));
+                    return Double.compare(Double.valueOf(s1),Double.valueOf(s2));
                 }
                 else return 0;
             }
         });
         if(changesort.equals("down")){
-
-            if(selectedButton.equals("usd"))
-                changedtv.setText(fa_sort_down+" CHANGE");
-            else if(selectedButton.equals("euro"))
-                changedtv.setText(fa_sort_down+" CHANGE");
-            else if(selectedButton.equals("btc"))
-                changedtv.setText(fa_sort_down+" CHANGE");
-            else if(selectedButton.equals("inr"))
-                changedtv.setText(fa_sort_down+" CHANGE");
+            changeupperarrow.setText(fa_sort_down);
         }
         else if(changesort.equals("up")){
-
-            if(selectedButton.equals("usd"))
-                changedtv.setText(fa_sort_up+" CHANGE");
-            else if(selectedButton.equals("euro"))
-                changedtv.setText(fa_sort_up+" CHANGE");
-            else if(selectedButton.equals("btc"))
-                changedtv.setText(fa_sort_up+" CHANGE");
-            else if(selectedButton.equals("inr"))
-                changedtv.setText(fa_sort_up+" CHANGE");
+            changeupperarrow.setText(fa_sort_up);
         }
-
-        if(selectedButton.equals("usd"))
-            pricetv.setText(usdt);
-        else if(selectedButton.equals("euro"))
-            pricetv.setText(eutot);
-        else if(selectedButton.equals("btc"))
-            pricetv.setText(btct);
-        else if(selectedButton.equals("inr"))
-            pricetv.setText(inrt);
+        priceupperarrow.setText(" ");
     }
 }

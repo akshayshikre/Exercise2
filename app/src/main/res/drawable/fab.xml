@@ -9,5 +9,5 @@
 
     <stroke
         android:width="2dp"
-        android:color="@color/colorFabTint" />
+        android:color="@color/colorPrimary" />
 </shape>

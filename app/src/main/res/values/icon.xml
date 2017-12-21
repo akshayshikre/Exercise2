@@ -8,6 +8,6 @@
     <string name="fa_area_chart">&#xf1fe;</string>
     <string name="fa_line_chart">&#xf201;</string>
     <string name="fa_angle_double_down">&#xf103;</string>
-    <string name="fa_sort_up">&#xf0de;</string>
-    <string name="fa_sort_down">&#xf0dd;</string>
+    <string name="fa_sort_up">&#xf0d8;</string>
+    <string name="fa_sort_down">&#xf0d7;</string>
 </resources>

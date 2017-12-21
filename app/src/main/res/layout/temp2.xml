@@ -157,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
-                        android:elevation="16dp"
+                        android:elevation="8dp"
                         android:text="@string/fa_usd"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -225,7 +225,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
-                        android:elevation="16dp"
+                        android:elevation="8dp"
                         android:text="@string/fa_euro"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -277,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
-                        android:elevation="16dp"
+                        android:elevation="8dp"
                         android:text="@string/fa_btc"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
                         android:textColor="@color/colorwhite"
@@ -329,7 +329,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
-                        android:elevation="16dp"
+                        android:elevation="8dp"
                         android:gravity="center"
                         android:text="@string/fa_inr"
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -506,7 +506,8 @@
                 android:orientation="horizontal"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:weightSum="5.5"
+                android:weightSum="8"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
@@ -515,34 +516,70 @@
                     android:id="@+id/nametv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2.4"
+                    android:layout_weight="3.3"
                     android:gravity="center"
                     android:text="Title"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/pricetv"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.1"
-                    android:gravity="left|center"
-                    android:text="@string/fa_sort_down"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="3">
 
-                <TextView
-                    android:id="@+id/changedtv"
+                    <TextView
+                        android:id="@+id/priceupperarrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fa_sort_down"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/pricetv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="6dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="PRICE"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="left|center"
-                    android:text="@string/fa_sort_down"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:id="@+id/changeupperarrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fa_sort_down"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/changedtv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="6dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:gravity="left|center"
+                        android:text="CHANGED"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <!--<View-->
@@ -621,19 +658,19 @@
                         app:backgroundTint="@color/colorFabTint"
                         app:fabSize="normal" />
 
-                <TextView
+                    <TextView
 
-                    android:id="@+id/fab5tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_gravity="center"
-                    android:elevation="16dp"
-                    android:text="@string/fa_angle_double_down"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textColor="@color/colorwhite"
-                    android:textSize="25sp" />
+                        android:id="@+id/fab5tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:elevation="8dp"
+                        android:text="@string/fa_angle_double_down"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="@color/colorwhite"
+                        android:textSize="25sp" />
                 </FrameLayout>
 
             </LinearLayout>
