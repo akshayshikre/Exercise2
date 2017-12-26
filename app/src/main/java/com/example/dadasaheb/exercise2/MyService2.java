@@ -16,6 +16,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +27,7 @@ import org.json.JSONObject;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -36,18 +41,22 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+import static com.example.dadasaheb.exercise2.MainActivity.url2;
+
 public class MyService2 extends Service {
     int count, click;
-    String Flag="notchanged";
+    String Flag = "notchanged";
     NotificationCompat.Builder notificationbldr;
+    Socket mSocket;
     OkHttpClient client2 = new OkHttpClient();
+    private Boolean isConnected = true;
+
     public MyService2() {
     }
 
     @Override
     public void onCreate() {
-        Log.i("Method","onCreate");
-
+        Log.i("Method", "onCreate");
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
@@ -65,7 +74,7 @@ public class MyService2 extends Service {
         nextIntent.setAction(Constants.ACTION.SETTING_ACTION);
         PendingIntent pnextIntent = PendingIntent.getActivity(this, 0, nextIntent, 0);
 
-        notificationbldr= new NotificationCompat.Builder(this)
+        notificationbldr = new NotificationCompat.Builder(this)
                 .setContentTitle("Exercise 2 content title")
                 .setTicker("Exercise 2 ticker")
                 .setSmallIcon(R.drawable.ic_menu_camera)
@@ -84,29 +93,25 @@ public class MyService2 extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("Method","onStartCommand");
-
+        Log.i("Method", "onStartCommand");
 
 
 /*******************************************/
 
-        if(intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+        if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
             Log.i("onStartCommand", "Received startforeground intent");
-            Notification notification=notificationbldr.setContentText("Started Clicked"+click++).build();
+            Notification notification = notificationbldr.setContentText("Started Clicked" + click++).build();
             startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notificationbldr.build());
 
-        }
-        else if(intent.getAction().equals(Constants.ACTION.BUTTON_ACTION)){
-            Log.i("onStartCommand","PREV_ACTION");
-            Notification notification=notificationbldr.setContentText("Clicked"+click++).build();
-            NotificationManager notimgr= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        } else if (intent.getAction().equals(Constants.ACTION.BUTTON_ACTION)) {
+            Log.i("onStartCommand", "PREV_ACTION");
+            Notification notification = notificationbldr.setContentText("Clicked" + click++).build();
+            NotificationManager notimgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             // noti.flags |=Notification.FLAG_AUTO_CANCEL;
-            notimgr.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,notification);
+            notimgr.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
 
-        }
-
-        else if(intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)){
-            Log.i("onStartCommand","STOPFOREGROUND_ACTION");
+        } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
+            Log.i("onStartCommand", "STOPFOREGROUND_ACTION");
             stopForeground(true);
             stopSelf();
         }
@@ -115,13 +120,13 @@ public class MyService2 extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Log.i("Method","onTaskRemoved");
+        Log.i("Method", "onTaskRemoved");
         super.onTaskRemoved(rootIntent);
     }
 
     @Override
     public void onDestroy() {
-        Log.i("Method","onDestroy");
+        Log.i("Method", "onDestroy");
         super.onDestroy();
     }
 
@@ -132,11 +137,7 @@ public class MyService2 extends Service {
     }
 
 
-
-
-
-
-    class MyTask extends AsyncTask<Void,Integer,Void> {
+    class MyTask extends AsyncTask<Void, Integer, Void> {
         Intent in;
         PendingIntent pi;
 
@@ -144,10 +145,10 @@ public class MyService2 extends Service {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            SharedPreferences sp=getSharedPreferences(MainActivity.MY_PREFS,MODE_PRIVATE);
-            count=sp.getInt("counter",0);
+            SharedPreferences sp = getSharedPreferences(MainActivity.MY_PREFS, MODE_PRIVATE);
+            count = sp.getInt("counter", 0);
 
-            Log.i("Method"," in onPreExecute"+" "+count);
+            Log.i("Method", " in onPreExecute" + " " + count);
         }
 
         @Override
@@ -159,18 +160,18 @@ public class MyService2 extends Service {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            Notification notification=notificationbldr.setContentText("Thread count"+count++).build();
-            NotificationManager notimgr= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            Notification notification = notificationbldr.setContentText("Thread count" + count++).build();
+            NotificationManager notimgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             // noti.flags |=Notification.FLAG_AUTO_CANCEL;
-            notimgr.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,notification);
+            notimgr.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            for(int i=0;i<999;i++)
+            for (int i = 0; i < 999; i++)
                 try {
                     Thread.sleep(1000);
-                    Log.i("count"," "+i+" "+count);
+                    Log.i("count", " " + i + " " + count);
                     count++;
                     publishProgress(count);
                 } catch (InterruptedException e) {
@@ -179,29 +180,64 @@ public class MyService2 extends Service {
             return null;
         }
     }
-    class OkHttpHandler extends AsyncTask<String,String,String>{
-        Boolean first=true;
+
+    class OkHttpHandler extends AsyncTask<String, String, String> {
+        Boolean first = true;
+
         @Override
         protected void onPreExecute() {
-            Log.i("onPreExecute","okhttp");
+            Log.i("onPreExecute", "okhttp");
             super.onPreExecute();
-            Request request = new Request.Builder().url(MainActivity.url).build();
-            EchoWebSocketListener listener = new EchoWebSocketListener();
-            WebSocket ws = client2.newWebSocket(request, listener);
+            try {
+               // mSocket = IO.socket("https://socket-io-chat.now.sh/");
+                mSocket=IO.socket("https://cryptocurrencyapp.herokuapp.com/BTC");
+                mSocket.on(Socket.EVENT_CONNECT, onConnect);
+                mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
+                mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+                mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+                mSocket.on("new message", onNewMessage);
+                mSocket.on("user joined", onUserJoined);
+                mSocket.on("user left", onUserLeft);
+                mSocket.on("typing", onTyping);
+                mSocket.on("stop typing", onStopTyping);
+                mSocket.connect();
+                mSocket.on("BTC ticker", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        JSONObject data = (JSONObject) args[0];
 
-            //client2.dispatcher().executorService().shutdown();
+                        Log.e("EVENT_MESSAGE", String.valueOf(data));
+                    }
+                }).on(Socket.EVENT_ERROR, new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        Exception err = (Exception)args[0];
+                    }
+                });
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+
+            //mSocket.on("login", onLogin);
+//            Request request = new Request.Builder().url(MainActivity.url2).build();
+//            EchoWebSocketListener listener = new EchoWebSocketListener();
+//            WebSocket ws = client2.newWebSocket(request, listener);
+//
+//            client2.dispatcher().executorService().shutdown();
+//
+
         }
 
         @Override
-        protected String doInBackground(String...params) {
-            Log.i("doInBackground","okhttp");
+        protected String doInBackground(String... params) {
+            Log.i("doInBackground", "okhttp");
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(100, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(20, TimeUnit.SECONDS).build();
 
 
-            for(int i=0;i<9999;i++)
+            for (int i = 0; i < 9999; i++)
                 try {
 
                     Request request = new Request.Builder()
@@ -214,7 +250,7 @@ public class MyService2 extends Service {
                     }
 
                     Thread.sleep(2000);
-                    Log.i("count"," "+i+" "+count);
+                    Log.i("count", " " + i + " " + count);
                     count++;
                     publishProgress(response.body().string());
 
@@ -228,19 +264,19 @@ public class MyService2 extends Service {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            Log.i("onProgressUpdate","okhttp");
+            Log.i("onProgressUpdate", "okhttp");
             super.onProgressUpdate(values);
-            String s=values[0];
+            String s = values[0];
 
-            if(s!=null)
-                Log.i("data",s);
-            else Log.i("data","data not found");
+            if (s != null)
+                Log.i("data", s);
+            else Log.i("data", "data not found");
 
             try {
-                JSONObject job=new JSONObject(s);
-                JSONArray jsonArray =job.getJSONArray("data");
+                JSONObject job = new JSONObject(s);
+                JSONArray jsonArray = job.getJSONArray("data");
                 MainActivity.coinList.clear();
-                for(int i=0;i<jsonArray.length();i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject json_obj = jsonArray.getJSONObject(i);
                     MainActivity.coinList.add(new Coin(
                             //    "Id":"4321","Url":"/coins/42/overview",
@@ -278,43 +314,43 @@ public class MyService2 extends Service {
                             json_obj.getString("Price_ETH"),
                             json_obj.getString("Change_ETH"),
                             json_obj.getString("Volume_ETH"),
-                            json_obj.getString("Sponsored").equals("true")?true:false
+                            json_obj.getString("Sponsored").equals("true") ? true : false
                     ));
                 }//end for
                 Coin c;
-                for(int i=0;i<MainActivity.coinList.size();i++){
-                    c=MainActivity.coinList.get(i);
+                for (int i = 0; i < MainActivity.coinList.size(); i++) {
+                    c = MainActivity.coinList.get(i);
                     Log.i("coinList data",
-                            c.Id+" "+
-                                    c.Url+" "+
-                                    c.ImageUrl+" "+
-                                    c.Name+" "+
-                                    c.Symbol+" "+
-                                    c.CoinName+" "+
-                                    c.FullName+" "+
-                                    c.Algorithm+" "+
-                                    c.ProofType+" "+
-                                    c.FullyPremined+" "+
-                                    c.TotalCoinSupply+" "+
-                                    c.PreMinedValue+" "+
-                                    c.TotalCoinsFreeFloat+" "+
-                                    c.SortOrder+" "+
-                                    c.Price_USD+" "+
-                                    c.Change_USD+" "+
-                                    c.Volume_USD+" "+
-                                    c.Price_EUR+" "+
-                                    c.Change_EUR+" "+
-                                    c.Volume_EUR+" "+
-                                    c.Price_BTC+" "+
-                                    c.Change_BTC+" "+
-                                    c.Volume_BTC+" "+
-                                    c.Price_ETH+" "+
-                                    c.Change_ETH+" "+
-                                    c.Volume_ETH+" "+
-                                    c.Sponsored+" "
+                            c.Id + " " +
+                                    c.Url + " " +
+                                    c.ImageUrl + " " +
+                                    c.Name + " " +
+                                    c.Symbol + " " +
+                                    c.CoinName + " " +
+                                    c.FullName + " " +
+                                    c.Algorithm + " " +
+                                    c.ProofType + " " +
+                                    c.FullyPremined + " " +
+                                    c.TotalCoinSupply + " " +
+                                    c.PreMinedValue + " " +
+                                    c.TotalCoinsFreeFloat + " " +
+                                    c.SortOrder + " " +
+                                    c.Price_USD + " " +
+                                    c.Change_USD + " " +
+                                    c.Volume_USD + " " +
+                                    c.Price_EUR + " " +
+                                    c.Change_EUR + " " +
+                                    c.Volume_EUR + " " +
+                                    c.Price_BTC + " " +
+                                    c.Change_BTC + " " +
+                                    c.Volume_BTC + " " +
+                                    c.Price_ETH + " " +
+                                    c.Change_ETH + " " +
+                                    c.Volume_ETH + " " +
+                                    c.Sponsored + " "
                     );
                 }
-                if(MainActivity.appAvailable.equals("true") || MainActivity.appAvailable.equals("first")) {
+                if (MainActivity.appAvailable.equals("true") || MainActivity.appAvailable.equals("first")) {
                     Intent broadcastIntent = new Intent();
                     broadcastIntent.setAction(Constants.ACTION.mBroadcastArrayListAction);
                     broadcastIntent.putExtra("arraylist", "changed");
@@ -350,37 +386,168 @@ public class MyService2 extends Service {
 
         }
     }
-    private final class EchoWebSocketListener extends WebSocketListener {
-        private static final int NORMAL_CLOSURE_STATUS = 1000;
+//    private final class EchoWebSocketListener extends WebSocketListener {
+//        private static final int NORMAL_CLOSURE_STATUS = 1000;
+//
+//        @Override
+//        public void onOpen(WebSocket webSocket, Response response) {
+//            webSocket.send("Hello, it's SSaurel !");
+//            webSocket.send("What's up ?");
+//            webSocket.send(ByteString.decodeHex("deadbeef"));
+//            webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !");
+//        }
+//
+//        @Override
+//        public void onMessage(WebSocket webSocket, String text) {
+//            Log.i("Receiving : " , text);
+//        }
+//
+//        @Override
+//        public void onMessage(WebSocket webSocket, ByteString bytes) {
+//            Log.i("Receiving bytes : " , bytes.hex());
+//        }
+//
+//        @Override
+//        public void onClosing(WebSocket webSocket, int code, String reason) {
+//            webSocket.close(NORMAL_CLOSURE_STATUS, null);
+//            Log.i("Closing : " , code + " / " + reason);
+//        }
+//
+//        @Override
+//        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+//            Log.i("Error : " , t.getMessage());
+//        }
+//    }
 
+
+    private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
-        public void onOpen(WebSocket webSocket, Response response) {
-            webSocket.send("Hello, it's SSaurel !");
-            webSocket.send("What's up ?");
-            webSocket.send(ByteString.decodeHex("deadbeef"));
-            webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !");
+        public void call(final Object... args) {
+            // Thread t =new Thread(new Runnable() {
+            //   @Override
+            //  public void run() {
+            //if (!isConnected) {
+                //if(null!=mUsername)
+                //   mSocket.emit("add user", mUsername);
+
+                Log.e("onConnect", "conected");
+                isConnected = true;
+//                }
+//            });
+//            t.start();
+
         }
 
-        @Override
-        public void onMessage(WebSocket webSocket, String text) {
-            Log.i("Receiving : " , text);
-        }
+    };
 
-        @Override
-        public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.i("Receiving bytes : " , bytes.hex());
-        }
+        private Emitter.Listener onDisconnect = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                isConnected = false;
+                Toast.makeText(getApplicationContext(),
+                        "disconnected", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//            t.start();
+                }
+            };
 
-        @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
-            webSocket.close(NORMAL_CLOSURE_STATUS, null);
-            Log.i("Closing : " , code + " / " + reason);
-        }
 
-        @Override
-        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.i("Error : " , t.getMessage());
-        }
+        private Emitter.Listener onConnectError = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                JSONObject data = (JSONObject) args[0];
+                Log.i("onConnectError", data.toString());
+//                }
+//            });
+//            t.start();
+            }
+        };
+
+        private Emitter.Listener onNewMessage = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                JSONObject data = (JSONObject) args[0];
+                Log.i("onNewMessage", data.toString());
+//                }
+//            });
+//            t.start();
+            }
+        };
+
+        private Emitter.Listener onUserJoined = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                JSONObject data = (JSONObject) args[0];
+                Log.i("onUserJoined", data.toString());
+//                }
+//            });
+//            t.start();
+            }
+        };
+
+        private Emitter.Listener onUserLeft = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                JSONObject data = (JSONObject) args[0];
+                Log.i("onUserLeft", data.toString());
+//                }
+//            });
+//            t.start();
+            }
+        };
+
+        private Emitter.Listener onTyping = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                JSONObject data = (JSONObject) args[0];
+                Log.i("onTyping", data.toString());
+//                }
+//            });
+//            t.start();
+            }
+        };
+
+        private Emitter.Listener onStopTyping = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+//            Thread t =new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                JSONObject data = (JSONObject) args[0];
+                Log.i("onStopTyping", data.toString());
+//                }
+//            });
+//            t.start();
+            }
+        };
+
+        private Runnable onTypingTimeout = new Runnable() {
+            @Override
+            public void run() {
+                //if (!mTyping) return;
+
+                //mTyping = false;
+                mSocket.emit("stop typing");
+            }
+        };
     }
 
-}

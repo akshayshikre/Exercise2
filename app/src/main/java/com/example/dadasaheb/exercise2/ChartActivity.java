@@ -6,20 +6,16 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +23,6 @@ import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -40,7 +34,6 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
-import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +41,55 @@ import java.util.List;
 public class ChartActivity extends DemoBase implements
         OnChartGestureListener, OnChartValueSelectedListener {
 
+    ArrayList<Entry> values = new ArrayList<Entry>();
     Button b1,b2,b3,b4,b5,b6,b7,b8;
     FloatingActionButton fab1,fab2,fab3;
     TextView linetv,tickertv,alerttv;
     private LineChart mChart;
 //    private SeekBar mSeekBarX, mSeekBarY;
 //    private TextView tvX, tvY;
+public class Livedata extends AsyncTask<Void, Void, Void> {
+    @Override
+    protected void onProgressUpdate(Void... z) {
+        Log.i("graph","update");
+        super.onProgressUpdate(z);
+        float val = (float) (Math.random() * 100) + 3;
+        values.add(new Entry(values.size(), val, getResources().getDrawable(R.drawable.star)));
+        mChart.notifyDataSetChanged();
+        mChart.moveViewToX(mChart.getData().getDataSetCount());
+        Log.e("graph","data added "+val );
+    }
 
+    @Override
+    protected Void doInBackground(Void... voids) {
+        for(int i=0;i<9999;i++) {
+            Log.i("graph", "doinback");
+            try {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+            publishProgress();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Log.i("graph","pre");
+        doInBackground();
+    }
+}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -313,7 +348,7 @@ public class ChartActivity extends DemoBase implements
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
 //        mChart.centerViewTo(20, 50, AxisDependency.LEFT);
 
-        mChart.animateX(2500);
+        mChart.animateX(500);
         //mChart.invalidate();
 
         // get the legend (only possible after setting data)
@@ -324,6 +359,8 @@ public class ChartActivity extends DemoBase implements
 
         // // dont forget to refresh the drawing
         // mChart.invalidate();
+        new Livedata().execute();
+        Log.i("graph","execute");
     }
 
     @Override
@@ -514,7 +551,7 @@ public class ChartActivity extends DemoBase implements
 
     private void setData(int count, float range) {
 
-        ArrayList<Entry> values = new ArrayList<Entry>();
+
 
         for (int i = 0; i < count; i++) {
 

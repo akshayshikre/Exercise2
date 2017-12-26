@@ -12,8 +12,10 @@ public class Constants {
         public static String STARTFOREGROUND_ACTION="com.example.dadasaheb.exercise2.startforeground";
         public static String STOPFOREGROUND_ACTION="com.example.dadasaheb.exercise2.stopforeground";
         public static String mBroadcastArrayListAction = "com.example.dadasaheb.exercise2.arraylist";
+
     }
     public interface NOTIFICATION_ID{
         public static int FOREGROUND_SERVICE=999;
     }
+    public static final String SERVER_URL = "https://socket-io-chat.now.sh/";
 }

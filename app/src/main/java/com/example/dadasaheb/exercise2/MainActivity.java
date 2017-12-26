@@ -25,9 +25,17 @@ import android.view.MenuItem;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import android.util.Log;
+import android.widget.Toast;
 
+
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     public static String inrt="";
 
     public static String url= "https://cryptocurrencyapp.herokuapp.com/getCoinList";
+    public static String url2= "https://cryptocurrencyapp.herokuapp.com/";
 
 //    private BroadcastReceiver listReceiver =new BroadcastReceiver() {
 //
@@ -297,6 +306,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 })
         );
+
      }
 
     @Override
@@ -585,6 +595,12 @@ private final class EchoWebSocketListener extends WebSocketListener {
 }
 
 
+    private Socket mSocket;
+    {
+        try {
+            mSocket = IO.socket(url);
+        } catch (URISyntaxException e) {}
+    }
 
 
     //All methods
@@ -767,4 +783,6 @@ private final class EchoWebSocketListener extends WebSocketListener {
         }
         priceupperarrow.setText(" ");
     }
+
+
 }
