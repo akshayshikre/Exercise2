@@ -40,6 +40,7 @@ public class MyService2 extends Service {
     int count, click;
     String Flag="notchanged";
     NotificationCompat.Builder notificationbldr;
+    OkHttpClient client2 = new OkHttpClient();
     public MyService2() {
     }
 
@@ -184,6 +185,11 @@ public class MyService2 extends Service {
         protected void onPreExecute() {
             Log.i("onPreExecute","okhttp");
             super.onPreExecute();
+            Request request = new Request.Builder().url(MainActivity.url).build();
+            EchoWebSocketListener listener = new EchoWebSocketListener();
+            WebSocket ws = client2.newWebSocket(request, listener);
+
+            //client2.dispatcher().executorService().shutdown();
         }
 
         @Override
@@ -344,6 +350,37 @@ public class MyService2 extends Service {
 
         }
     }
+    private final class EchoWebSocketListener extends WebSocketListener {
+        private static final int NORMAL_CLOSURE_STATUS = 1000;
 
+        @Override
+        public void onOpen(WebSocket webSocket, Response response) {
+            webSocket.send("Hello, it's SSaurel !");
+            webSocket.send("What's up ?");
+            webSocket.send(ByteString.decodeHex("deadbeef"));
+            webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !");
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            Log.i("Receiving : " , text);
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocket, ByteString bytes) {
+            Log.i("Receiving bytes : " , bytes.hex());
+        }
+
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            webSocket.close(NORMAL_CLOSURE_STATUS, null);
+            Log.i("Closing : " , code + " / " + reason);
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            Log.i("Error : " , t.getMessage());
+        }
+    }
 
 }

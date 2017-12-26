@@ -34,6 +34,11 @@ import java.util.Comparator;
 import java.util.Observable;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
+
 import java.util.*;
 import java.util.Observable.*;
 
@@ -546,9 +551,43 @@ public class MainActivity extends AppCompatActivity
 //        return null;
 //    }
 //}
+private final class EchoWebSocketListener extends WebSocketListener {
+    private static final int NORMAL_CLOSURE_STATUS = 1000;
+
+    @Override
+    public void onOpen(WebSocket webSocket, Response response) {
+        webSocket.send("Hello, it's SSaurel !");
+        webSocket.send("What's up ?");
+        webSocket.send(ByteString.decodeHex("deadbeef"));
+        webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !");
+    }
+
+    @Override
+    public void onMessage(WebSocket webSocket, String text) {
+        Log.i("Receiving : " , text);
+    }
+
+    @Override
+    public void onMessage(WebSocket webSocket, ByteString bytes) {
+        Log.i("Receiving bytes : " , bytes.hex());
+    }
+
+    @Override
+    public void onClosing(WebSocket webSocket, int code, String reason) {
+        webSocket.close(NORMAL_CLOSURE_STATUS, null);
+        Log.i("Closing : " , code + " / " + reason);
+    }
+
+    @Override
+    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+        Log.i("Error : " , t.getMessage());
+    }
+}
 
 
-//All methods
+
+
+    //All methods
     void usdClick(){
         fab1.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFabTint)));
         fab2.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorwhite)));
