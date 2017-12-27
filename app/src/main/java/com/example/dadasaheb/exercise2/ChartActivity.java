@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +39,7 @@ import com.github.mikephil.charting.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChartActivity extends DemoBase implements
+public class ChartActivity extends AppCompatActivity implements
         OnChartGestureListener, OnChartValueSelectedListener {
 
     ArrayList<Entry> values = new ArrayList<Entry>();
@@ -53,33 +54,24 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
     protected void onProgressUpdate(Void... z) {
         Log.i("graph","update");
         super.onProgressUpdate(z);
-        float val = (float) (Math.random() * 100) + 3;
-        values.add(new Entry(values.size(), val, getResources().getDrawable(R.drawable.star)));
-        mChart.notifyDataSetChanged();
-        mChart.moveViewToX(mChart.getData().getDataSetCount());
-        Log.e("graph","data added "+val );
+        //float val = (float) (Math.random() * 100) + 3;
+        //values.add(new Entry(values.size(), val, getResources().getDrawable(R.drawable.star)));
+        setData((int)mChart.getYMax()+1,100);
+        mChart.invalidate();
+        Log.e("graph","data added "+(int)mChart.getYMax()+1 );
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
         for(int i=0;i<9999;i++) {
             Log.i("graph", "doinback");
-            try {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(5000);
+               try {
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        publishProgress();
                     }
-                }).start();
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-            publishProgress();
-        }
         return null;
     }
 
@@ -90,6 +82,50 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
         doInBackground();
     }
 }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // we're going to simulate real time with thread that append data to the graph
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // we add 100 new entries
+                for (int i = 0; i < 100; i++) {
+
+                    // sleep to slow down the add of entries
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        // manage error ...
+                    }
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            addEntry();
+                        }
+                    });
+
+                }
+            }
+        }).start();
+    }
+
+
+        // add random data to graph
+        private void addEntry() {
+            // here, we choose to display max 10 points on the viewport and we scroll to end
+            //series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
+            int temp=(int)mChart.getYMax();
+            mChart.clear();
+            setData(temp+1,100);
+            mChart.invalidate();
+        }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -359,7 +395,7 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
 
         // // dont forget to refresh the drawing
         // mChart.invalidate();
-        new Livedata().execute();
+        //new Livedata().execute();
         Log.i("graph","execute");
     }
 
