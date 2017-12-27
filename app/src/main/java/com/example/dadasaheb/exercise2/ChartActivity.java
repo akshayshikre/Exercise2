@@ -34,6 +34,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
@@ -114,15 +115,69 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
         }).start();
     }
 
+    private LineDataSet createSet() {
 
+        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.getHoloBlue());
+        set.setCircleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(false);
+        return set;
+    }
         // add random data to graph
         private void addEntry() {
-            // here, we choose to display max 10 points on the viewport and we scroll to end
-            //series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
-            int temp=(int)mChart.getYMax();
-            mChart.clear();
-            setData(temp+1,100);
-            mChart.invalidate();
+//            // here, we choose to display max 10 points on the viewport and we scroll to end
+//            //series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
+//            float val = (float) (Math.random() * 100) + 3;
+//            mChart.getData().addEntry(new Entry(mChart.getData().getXMax(), val, getResources().getDrawable(R.drawable.star)),
+//                    mChart.getData().getEntryCount()+1);
+//            mChart.getData().notifyDataChanged(); // let the data know a dataSet changed
+//            mChart.notifyDataSetChanged(); // let the chart know it's data changed
+//            mChart.moveViewToX(mChart.getData().getEntryCount());
+//            Log.i("graph","last");
+//            //int temp=(int)mChart.getYMax();
+//
+//            //setData(temp + 1, 100);
+//
+//            // redraw
+//            //mChart.invalidate();
+
+            LineData data = mChart.getData();
+
+            if (data != null) {
+
+                ILineDataSet set = data.getDataSetByIndex(0);
+                // set.addEntry(...); // can be called as well
+
+                if (set == null) {
+                    set = createSet();
+                    data.addDataSet(set);
+                }
+
+                data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
+                data.notifyDataChanged();
+
+                // let the chart know it's data has changed
+                mChart.notifyDataSetChanged();
+
+                // limit the number of visible entries
+                mChart.setVisibleXRangeMaximum(120);
+                // mChart.setVisibleYRange(30, AxisDependency.LEFT);
+
+                // move to the latest entry
+                mChart.moveViewToX(data.getEntryCount());
+
+                // this automatically refreshes the chart (calls invalidate())
+                // mChart.moveViewTo(data.getXValCount()-7, 55f,
+                // AxisDependency.LEFT);
+            }
         }
 
 
