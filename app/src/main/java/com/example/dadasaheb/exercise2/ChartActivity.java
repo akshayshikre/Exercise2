@@ -1,22 +1,29 @@
-
 package com.example.dadasaheb.exercise2;
+
+/**
+ * Created by admin on 27/12/17.
+ */
+
+
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +31,8 @@ import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -36,53 +45,24 @@ import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.Button;
 
 public class ChartActivity extends AppCompatActivity implements
         OnChartGestureListener, OnChartValueSelectedListener {
 
-    ArrayList<Entry> values = new ArrayList<Entry>();
-    Button b1,b2,b3,b4,b5,b6,b7,b8;
+    TextView t1,t2,t3,t4,t5,t6,t7,t8;
     FloatingActionButton fab1,fab2,fab3;
     TextView linetv,tickertv,alerttv;
     private LineChart mChart;
+
+    Button z;
+
 //    private SeekBar mSeekBarX, mSeekBarY;
 //    private TextView tvX, tvY;
-public class Livedata extends AsyncTask<Void, Void, Void> {
-    @Override
-    protected void onProgressUpdate(Void... z) {
-        Log.i("graph","update");
-        super.onProgressUpdate(z);
-        //float val = (float) (Math.random() * 100) + 3;
-        //values.add(new Entry(values.size(), val, getResources().getDrawable(R.drawable.star)));
-        setData((int)mChart.getYMax()+1,100);
-        mChart.invalidate();
-        Log.e("graph","data added "+(int)mChart.getYMax()+1 );
-    }
-
-    @Override
-    protected Void doInBackground(Void... voids) {
-        for(int i=0;i<9999;i++) {
-            Log.i("graph", "doinback");
-               try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        publishProgress();
-                    }
-        return null;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        Log.i("graph","pre");
-        doInBackground();
-    }
-}
 
     @Override
     protected void onResume() {
@@ -131,8 +111,8 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
         set.setDrawValues(false);
         return set;
     }
-        // add random data to graph
-        private void addEntry() {
+    // add random data to graph
+    private void addEntry() {
 //            // here, we choose to display max 10 points on the viewport and we scroll to end
 //            //series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
 //            float val = (float) (Math.random() * 100) + 3;
@@ -149,54 +129,67 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
 //            // redraw
 //            //mChart.invalidate();
 
-            LineData data = mChart.getData();
+        LineData data = mChart.getData();
 
-            if (data != null) {
+        if (data != null) {
 
-                ILineDataSet set = data.getDataSetByIndex(0);
-                // set.addEntry(...); // can be called as well
+            ILineDataSet set = data.getDataSetByIndex(0);
+            // set.addEntry(...); // can be called as well
 
-                if (set == null) {
-                    set = createSet();
-                    data.addDataSet(set);
-                }
-
-                data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 40) + 30f), 0);
-                data.notifyDataChanged();
-
-                // let the chart know it's data has changed
-                mChart.notifyDataSetChanged();
-
-                // limit the number of visible entries
-                mChart.setVisibleXRangeMaximum(120);
-                // mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-                // move to the latest entry
-                mChart.moveViewToX(data.getEntryCount());
-
-                // this automatically refreshes the chart (calls invalidate())
-                // mChart.moveViewTo(data.getXValCount()-7, 55f,
-                // AxisDependency.LEFT);
+            if (set == null) {
+                set = createSet();
+                data.addDataSet(set);
             }
+
+            data.addEntry(new Entry(set.getEntryCount(), (float) (Math.random() * 100) + 30f), 0);
+            data.notifyDataChanged();
+
+            // let the chart know it's data has changed
+            mChart.notifyDataSetChanged();
+
+            // limit the number of visible entries
+            mChart.setVisibleXRangeMaximum(40);
+            // mChart.setVisibleYRange(30, AxisDependency.LEFT);
+
+            // move to the latest entry
+            mChart.setScaleXEnabled(false);
+            mChart.setScaleEnabled(false);
+            mChart.disableScroll();
+            mChart.setDragEnabled(false);
+            MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+            mv.setChartView(mChart); // For bounds control
+            mChart.setMarker(mv);
+            //mChart.canScrollHorizontally();
+            mChart.moveViewToX(data.getEntryCount());
+                //mChart.invalidate();
+            // this automatically refreshes the chart (calls invalidate())
+            // mChart.moveViewTo(data.getXValCount()-7, 55f,
+            // AxisDependency.LEFT);
         }
+    }
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
         setContentView(R.layout.linegraph);
 
-        b1=(Button)findViewById(R.id.l1b1);
-        b2=(Button)findViewById(R.id.l1b2);
-        b3=(Button)findViewById(R.id.l1b3);
-        b4=(Button)findViewById(R.id.l1b4);
-        b5=(Button)findViewById(R.id.l2b1);
-        b6=(Button)findViewById(R.id.l2b2);
-        b7=(Button)findViewById(R.id.l2b3);
-        b8=(Button)findViewById(R.id.l2b4);
+        z=(Button)findViewById(R.id.zoom);
+        t1=(TextView)findViewById(R.id.l1t1);
+        t2=(TextView)findViewById(R.id.l1t2);
+        t3=(TextView)findViewById(R.id.l1t3);
+        t4=(TextView)findViewById(R.id.l1t4);
+        t5=(TextView)findViewById(R.id.l2t1);
+        t6=(TextView)findViewById(R.id.l2t2);
+        t7=(TextView)findViewById(R.id.l2t3);
+        t8=(TextView)findViewById(R.id.l2t4);
 
         linetv=(TextView) findViewById(R.id.fablinetv);
         tickertv=(TextView)findViewById(R.id.fabtickertv);
@@ -254,53 +247,163 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
                 alerttv.setTextColor(getResources().getColor(R.color.colorwhite));
             }
         });
-        b1.setOnClickListener((new View.OnClickListener() {
+
+
+        t1.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                  t1.setText(getString(R.string.text1));
+                //  Toast.makeText(ChartActivity.this,"click on text1 ",Toast.LENGTH_SHORT).show();
+
+                String styledText = "<b><u>6h</u></b>";
+                t1.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t1.setTextColor(getResources().getColor(R.color.colorFabTint));
+                t2.setText("24h");
+                t2.setTextColor(Color.BLACK);
+                t3.setText("1w");
+                t3.setTextColor(Color.BLACK);
+                t4.setText("1m");
+                t4.setTextColor(Color.BLACK);
+//                t5.setText("1h");
+//                t6.setText("2h");
+//                t7.setText("4h");
+//                t8.setText("8h");
 
 
             }
         }));
-        b2.setOnClickListener(new View.OnClickListener() {
+        t2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                t2.setText(getString(R.string.text2));
+                String styledText = "<b><u>24h</u></b>";
+                t2.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t2.setTextColor(getResources().getColor(R.color.colorFabTint));
+                t1.setText("6h");
+                t1.setTextColor(Color.BLACK);
+                t3.setText("1w");
+                t3.setTextColor(Color.BLACK);
+                t4.setText("1m");
+                t4.setTextColor(Color.BLACK);
+//                t5.setText("1h");
+//                t6.setText("2h");
+//                t7.setText("4h");
+//                t8.setText("8h");
 
             }
         });
-        b3.setOnClickListener(new View.OnClickListener() {
+        t3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                t3.setText(getString(R.string.text3));
+                String styledText = "<b><u>1w</u></b>";
+                t3.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t3.setTextColor(getResources().getColor(R.color.colorFabTint));
+                t2.setText("24h");
+                t2.setTextColor(Color.BLACK);
+                t1.setText("6h");
+                t1.setTextColor(Color.BLACK);
+                t4.setText("1m");
+                t4.setTextColor(Color.BLACK);
+//                t5.setText("1h");
+//                t6.setText("2h");
+//                t7.setText("4h");
+//                t8.setText("8h");
             }
         });
-        b4.setOnClickListener(new View.OnClickListener() {
+        t4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                t4.setText(getString(R.string.text4));
+                String styledText = "<b><u>1m</u></b>";
+                t4.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t4.setTextColor(getResources().getColor(R.color.colorFabTint));
+                t2.setText("24h");
+                t2.setTextColor(Color.BLACK);
+                t3.setText("1w");
+                t3.setTextColor(Color.BLACK);
+                t1.setText("6h");
+                t1.setTextColor(Color.BLACK);
+//                t5.setText("1h");
+//                t6.setText("2h");
+//                t7.setText("4h");
+//                t8.setText("8h");
             }
         });
-        b5.setOnClickListener(new View.OnClickListener() {
+        t5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                t5.setText(getString(R.string.text5));
+                String styledText = "<b><u>1h</u></b>";
+                t5.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t5.setTextColor(getResources().getColor(R.color.colorFabTint));
+//                t2.setText("24h");
+//                t3.setText("1w");
+//                t4.setText("1m");
+//                t1.setText("6h");
+                t6.setText("2h");
+                t6.setTextColor(Color.BLACK);
+                t7.setText("4h");
+                t7.setTextColor(Color.BLACK);
+                t8.setText("8h");
+                t8.setTextColor(Color.BLACK);
             }
         });
-        b6.setOnClickListener(new View.OnClickListener() {
+        t6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                t6.setText(getString(R.string.text6));
+                String styledText = "<b><u>2h</u></b>";
+                t6.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t6.setTextColor(getResources().getColor(R.color.colorFabTint));
+//                t2.setText("24h");
+//                t3.setText("1w");
+//                t4.setText("1m");
+                t5.setText("1h");
+                t5.setTextColor(Color.BLACK);
+//                t1.setText("6h");
+                t7.setText("4h");
+                t7.setTextColor(Color.BLACK);
+                t8.setText("8h");
+                t8.setTextColor(Color.BLACK);
             }
         });
-        b7.setOnClickListener(new View.OnClickListener() {
+        t7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                t7.setText(getString(R.string.text7));
+                String styledText = "<b><u>4h</u></b>";
+                t7.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t7.setTextColor(getResources().getColor(R.color.colorFabTint));
+//                t2.setText("24h");
+//                t3.setText("1w");
+//                t4.setText("1m");
+                t5.setText("1h");
+                t5.setTextColor(Color.BLACK);
+                t6.setText("2h");
+                t6.setTextColor(Color.BLACK);
+//                t1.setText("6h");
+                t8.setText("8h");
+                t8.setTextColor(Color.BLACK);
             }
         });
-        b8.setOnClickListener(new View.OnClickListener() {
+        t8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                t8.setText(getString(R.string.text8));
+                String styledText = "<b><u>8h</u></b>";
+                t8.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
+                t8.setTextColor(getResources().getColor(R.color.colorFabTint));
+//                t2.setText("24h");
+//                t3.setText("1w");
+//                t4.setText("1m");
+                t5.setText("1h");
+                t5.setTextColor(Color.BLACK);
+                t6.setText("2h");
+                t6.setTextColor(Color.BLACK);
+                t7.setText("4h");
+                t7.setTextColor(Color.BLACK);
+//                t1.setText("6h");
             }
         });
 //        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar1);
@@ -395,20 +498,16 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
         mChart.getXAxis().setAxisLineColor(0x1c2030);
         mChart.getXAxis().disableGridDashedLine();
 
-        mChart.getAxisLeft().setGridColor(0);
-        mChart.getAxisLeft().setAxisLineColor(0x1c2030);
-
         mChart.getXAxis().setEnabled(true);
-        mChart.getAxisLeft().setEnabled(true);
+        mChart.getAxisLeft().setEnabled(true);              //by me
+        mChart.getAxisLeft().setAxisLineColor(0xffffff);   //by me
         mChart.getAxisRight().setEnabled(false);
 
         mChart.setDrawGridBackground(false);
         mChart.setGridBackgroundColor(Color.TRANSPARENT);
+
         mChart.bringToFront();
         mChart.invalidate();
-
-
-
 
 
 
@@ -418,12 +517,14 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
 //        leftAxis.addLimitLine(ll1);
 //        leftAxis.addLimitLine(ll2);
-        leftAxis.setAxisMaximum(200f);
-        leftAxis.setAxisMinimum(-50f);
-        leftAxis.setYOffset(20f);
+
+        leftAxis.setAxisMaximum(200f);  //by me
+        leftAxis.setAxisMinimum(0f);   //by me -50f
+        //     leftAxis.setYOffset(20f);
+
         // leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setDrawZeroLine(true);
-
+//
 //        // limit lines are drawn behind data (and not on top)
 //        leftAxis.setDrawLimitLinesBehindData(true);
 
@@ -433,25 +534,29 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
+
         setData(45, 100);
 
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
 //        mChart.centerViewTo(20, 50, AxisDependency.LEFT);
 
-        mChart.animateX(500);
+        mChart.animateX(2500);
         //mChart.invalidate();
 
         // get the legend (only possible after setting data)
         Legend l = mChart.getLegend();
 
         // modify the legend ...
-        l.setForm(LegendForm.LINE);
+        l.setForm(LegendForm.NONE);   //by akshay
 
         // // dont forget to refresh the drawing
         // mChart.invalidate();
-        //new Livedata().execute();
-        Log.i("graph","execute");
+
+//        mChart.bringToFront();
+//        mChart.invalidate();
+
+
     }
 
     @Override
@@ -612,6 +717,147 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
                 // mChart.saveToGallery("title"+System.currentTimeMillis())
                 break;
             }
+
+            case R.id.back_to_normal: {
+
+
+                mChart.clear();
+                mChart.invalidate();
+
+                mChart.setDrawGridBackground(false);
+
+                // no description text
+                mChart.getDescription().setEnabled(false);
+
+                // enable touch gestures
+                mChart.setTouchEnabled(true);
+
+                // enable scaling and dragging
+                mChart.setDragEnabled(true);
+                mChart.setScaleEnabled(true);
+                // mChart.setScaleXEnabled(true);
+                // mChart.setScaleYEnabled(true);
+
+                // if disabled, scaling can be done on x- and y-axis separately
+                mChart.setPinchZoom(true);
+
+                // set an alternative background color
+                // mChart.setBackgroundColor(Color.GRAY);
+
+                // create a custom MarkerView (extend MarkerView) and specify the layout
+                // to use for it
+                MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+                mv.setChartView(mChart); // For bounds control
+                mChart.setMarker(mv); // Set the marker to the chart
+
+//        // x-axis limit line
+//        LimitLine llXAxis = new LimitLine(10f, "Index 10");
+//        llXAxis.setLineWidth(4f);
+//        llXAxis.enableDashedLine(10f, 10f, 0f);
+//        llXAxis.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
+//        llXAxis.setTextSize(10f);
+//
+                XAxis xAxis=mChart.getXAxis();
+
+//        xAxis.enableGridDashedLine(10f, 10f, 0f);
+//        //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
+//        //xAxis.addLimitLine(llXAxis); // add x-axis limit line
+//
+//
+//        //Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+//
+//        LimitLine ll1 = new LimitLine(150f, "Upper Limit");
+//        ll1.setLineWidth(4f);
+//        ll1.enableDashedLine(10f, 10f, 0f);
+//        ll1.setLabelPosition(LimitLabelPosition.RIGHT_TOP);
+//        ll1.setTextSize(10f);
+//        //ll1.setTypeface(tf);
+//
+//        LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
+//        ll2.setLineWidth(4f);
+//        ll2.enableDashedLine(10f, 10f, 0f);
+//        ll2.setLabelPosition(LimitLabelPosition.RIGHT_BOTTOM);
+//        ll2.setTextSize(10f);
+//        //`ll2.setTypeface(tf);
+//
+
+
+
+                // mChart.getAxisLeft().setDrawGridLines(false);
+//       mChart.getXAxis().setDrawGridLines(false);
+
+
+
+                //  mChart.getXAxis().setEnabled(true);
+                mChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                mChart.getXAxis().disableAxisLineDashedLine();
+                mChart.getXAxis().setDrawAxisLine(false);
+                mChart.getXAxis().disableAxisLineDashedLine();
+                mChart.getXAxis().setAxisLineWidth(3f);
+                mChart.getXAxis().setGridColor(0);
+                mChart.getXAxis().setAxisLineColor(0x1c2030);
+                mChart.getXAxis().disableGridDashedLine();
+
+                mChart.getXAxis().setEnabled(true);
+                mChart.getAxisLeft().setEnabled(true);              //by me
+                mChart.getAxisLeft().setAxisLineColor(0xffffff);   //by me
+                mChart.getAxisRight().setEnabled(false);
+
+                mChart.setDrawGridBackground(false);
+                mChart.setGridBackgroundColor(Color.TRANSPARENT);
+
+                mChart.bringToFront();
+                mChart.invalidate();
+
+
+
+//        YAxis rightYAxis = mChart.getAxisRight();
+//        rightYAxis.setEnabled(true);
+                YAxis leftAxis = mChart.getAxisLeft();
+                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+//        leftAxis.addLimitLine(ll1);
+//        leftAxis.addLimitLine(ll2);
+
+                leftAxis.setAxisMaximum(200f);  //by me
+                leftAxis.setAxisMinimum(0f);   //by me -50f
+                //     leftAxis.setYOffset(20f);
+
+                // leftAxis.enableGridDashedLine(10f, 10f, 0f);
+                leftAxis.setDrawZeroLine(true);
+//
+//        // limit lines are drawn behind data (and not on top)
+//        leftAxis.setDrawLimitLinesBehindData(true);
+
+                mChart.getAxisRight().setEnabled(false);
+
+                //mChart.getViewPortHandler().setMaximumScaleY(2f);
+                //mChart.getViewPortHandler().setMaximumScaleX(2f);
+
+                // add data
+
+                setData(45, 100);
+
+//        mChart.setVisibleXRange(20);
+//        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
+//        mChart.centerViewTo(20, 50, AxisDependency.LEFT);
+
+                mChart.animateX(2500);
+                //mChart.invalidate();
+
+                // get the legend (only possible after setting data)
+                Legend l = mChart.getLegend();
+
+                // modify the legend ...
+                l.setForm(LegendForm.NONE);   //by akshay
+
+                // // dont forget to refresh the drawing
+                // mChart.invalidate();
+
+//        mChart.bringToFront();
+//        mChart.invalidate();
+                break;
+            }
+
         }
         return true;
     }
@@ -642,7 +888,7 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
 
     private void setData(int count, float range) {
 
-
+        ArrayList<Entry> values = new ArrayList<Entry>();
 
         for (int i = 0; i < count; i++) {
 
@@ -659,7 +905,8 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
             mChart.notifyDataSetChanged();
         } else {
             // create a dataset and give it a type
-            set1 = new LineDataSet(values, "DataSet 1");
+            set1 = new LineDataSet(values, "");
+
 
 
             set1.setDrawIcons(false);
@@ -671,7 +918,7 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
 
             set1.disableDashedLine();
             set1.setColor(R.color.colorPrimary);
-            set1.setLineWidth(2f);
+            set1.setLineWidth(2f);                   //by akash
 
 
 
@@ -730,7 +977,9 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
 
     @Override
     public void onChartDoubleTapped(MotionEvent me) {
+
         Log.i("DoubleTap", "Chart double-tapped.");
+
     }
 
     @Override
@@ -746,6 +995,16 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
     @Override
     public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
         Log.i("Scale / Zoom", "ScaleX: " + scaleX + ", ScaleY: " + scaleY);
+        z.setVisibility(View.VISIBLE);
+        z.setEnabled(true);
+
+//       if(mChart.z)
+//       {
+//           z.setVisibility(View.GONE);
+//           z.setEnabled(false);
+//
+//       }
+
     }
 
     @Override
@@ -764,4 +1023,15 @@ public class Livedata extends AsyncTask<Void, Void, Void> {
     public void onNothingSelected() {
         Log.i("Nothing selected", "Nothing selected.");
     }
+
+
+    public void resetZoom(View view) {
+
+        mChart.fitScreen();
+        z.setVisibility(View.GONE);
+        z.setEnabled(false);
+
+    }
+
+
 }
